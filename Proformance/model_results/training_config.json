@@ -1,0 +1,9 @@
+{
+  "train_samples": 1000000,
+  "val_samples": 200000,
+  "test_samples": 200000,
+  "feature_dim": 4096,
+  "n_estimators": 2000,
+  "early_stopping_rounds": 500,
+  "random_seed": 42
+}
