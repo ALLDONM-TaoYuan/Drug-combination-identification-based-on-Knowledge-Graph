@@ -1,5 +1,6 @@
 # Drug-combination-identification-based-on-Knowledge-Graph
-
+This repository contains the code and data for "KGP-DC: A framework for predicting drug combinations by integrating knowledge graphs and pre-trained features"
+![Framework of KGP-DC](Overview.png)
 # Description
 The process consists of five main steps: 1. Collect drug-drug combination information and drug-target interaction information from various databases, such as SynDrugMD, as well as from the literature. 2. Further organize the dataset and remove redundant information based on the collected drug CIDs, drug database names, and target IDs. 3. Based on the collected information, construct a knowledge graph and convert the chemical structure (SMILES) information of drugs and the sequence information of target proteins. 4. Utilize the pre-trained models ChemBert and Prot_Bert to extract feature vectors from drug chemical structure information and corresponding target sequence information, respectively, while employing the TransE model for embedding learning to represent drug-drug combinations. 5. Build an XGBoost model to identify potential drug-drug combinations.
 
