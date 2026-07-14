@@ -117,10 +117,10 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 If you use KGP-DC in your research, please cite our work:
 
 ```bibtex
-@article{kgpdc2024,
+@article{kgpdc2026,
   title={KGP-DC: A Framework for Predicting Drug Combinations by Integrating Knowledge Graphs and Pre-trained Features},
-  author={},
+  author={Tao Yuan},
   journal={},
-  year={2024}
+  year={2026}
 }
 ```
