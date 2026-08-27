@@ -1,0 +1,7 @@
+{
+  "source": "completed pretrained TransE experiment",
+  "reuse_scope": "train drugs with has_kg_relation=true only",
+  "cold_kg_used": false,
+  "isolated_xavier_used": false,
+  "smiles_kg_inference": false
+}
