@@ -1,9 +1,0 @@
-__pycache__/
-*.py[cod]
-.idea/
-*.log
-results/
-data/combo_index/
-data/combo_index_single_cold/
-data/labeled_pairs/
-data/split_single_cold/
