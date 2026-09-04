@@ -31,14 +31,6 @@ SynDrugMD/
 │   ├── targets/               # Protein sequences & ProtT5 features
 │   ├── embeddings/            # TransE KG embeddings
 │   └── model_results/         # Trained model & metrics
-├── new Performance/
-│   └── cold_start/            # Single-cold drug-pair experiment
-│       ├── main.py            # XGBoost training, selection, and plotting
-│       ├── feature.py         # Feature assembly, split preparation, and indexes
-│       ├── smiles.py
-│       ├── target.py
-│       ├── data/              # CSV inputs and retained NPY feature arrays
-│       └── KG/                # KG builder, triples, and pretrained features
 ├── Similarity/                # Drug & combo similarity analysis
 │   ├── morgan.py              # Morgan fingerprint extraction
 │   ├── sim.py                 # Cosine similarity computation & visualization
