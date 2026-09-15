@@ -1,0 +1,21 @@
+{
+  "graph": "warm-shared",
+  "scenario": "warm",
+  "definition": "warm train pairs (DDI) + DTI of every drug",
+  "out_path": "E:\\KGP-DC\\SynDrugMD KG\\cold_start\\KG_embedding\\warm\\shared\\triples.csv",
+  "train_positive_pairs": 30727,
+  "combination": 30431,
+  "interaction": 13252,
+  "triples": 43683,
+  "entities": 4309,
+  "universe_drugs": 3487,
+  "held_out_positive_pairs": 20273,
+  "held_out_pairs_in_graph": 0,
+  "combo_pairs_skipped_no_entity": 296,
+  "dti_skipped_missing_name": 0,
+  "dti_skipped_out_of_universe": 18,
+  "drugs": 3496,
+  "fold": "warm/test",
+  "note": "shared graph, identical for all folds",
+  "evaluated_pairs_in_graph": 0
+}

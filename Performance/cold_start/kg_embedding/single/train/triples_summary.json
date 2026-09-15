@@ -1,0 +1,20 @@
+{
+  "graph": "shared",
+  "definition": "train positives (DDI) + DTI of every split pool drug",
+  "out_path": "E:\\KGP-DC\\SynDrugMD KG\\cold_start_final\\KG_embedding\\shared\\triples.csv",
+  "train_positive_pairs": 18168,
+  "combination": 18168,
+  "interaction": 13252,
+  "triples": 31420,
+  "entities": 3576,
+  "universe_drugs": 3487,
+  "held_out_positive_pairs": 28431,
+  "held_out_pairs_in_graph": 0,
+  "combo_pairs_skipped_no_entity": 0,
+  "dti_skipped_missing_name": 0,
+  "dti_skipped_out_of_universe": 18,
+  "drugs": 3496,
+  "fold": "single/train",
+  "note": "shared graph, identical for all folds",
+  "evaluated_pairs_in_graph": "train positives are graph edges by design"
+}

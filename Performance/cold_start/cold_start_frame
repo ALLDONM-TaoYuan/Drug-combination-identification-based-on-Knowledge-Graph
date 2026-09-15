@@ -1,0 +1,10 @@
+cold_start/
+├── xgboost.py                   Main program for model training
+├── build_fold_features.py       Feature construction
+├── kg_embedding/                Knowledge graph embedding classification
+├── single_cold_start/           Single colding start experiment features file and results
+├── dual_cold_start/             Dual colding start experiment features file and results
+├── warm_start/                  Warm start experiment features file and results
+├── data_pipeline/               Drugs, Targets features and indices
+├── entity_split_data/           Single-cooling, double-cooling and heating data set division, as well as drug target feature files and index files
+└── smiles.py / target.py        Feature reading script
