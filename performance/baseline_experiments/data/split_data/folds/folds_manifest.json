@@ -1,0 +1,84 @@
+{
+  "n_folds": 5,
+  "seed": 42,
+  "rule": "pair-level stratified fold + inner validation carve",
+  "val_one_in": 8,
+  "pairs_total": 100066,
+  "files": {
+    "fold_1_train.csv": {
+      "pairs": 70014,
+      "positives": 35007,
+      "negatives": 35007
+    },
+    "fold_1_val.csv": {
+      "pairs": 10018,
+      "positives": 5009,
+      "negatives": 5009
+    },
+    "fold_1_test.csv": {
+      "pairs": 20034,
+      "positives": 10017,
+      "negatives": 10017
+    },
+    "fold_2_train.csv": {
+      "pairs": 70020,
+      "positives": 35010,
+      "negatives": 35010
+    },
+    "fold_2_val.csv": {
+      "pairs": 10026,
+      "positives": 5013,
+      "negatives": 5013
+    },
+    "fold_2_test.csv": {
+      "pairs": 20020,
+      "positives": 10010,
+      "negatives": 10010
+    },
+    "fold_3_train.csv": {
+      "pairs": 70026,
+      "positives": 35013,
+      "negatives": 35013
+    },
+    "fold_3_val.csv": {
+      "pairs": 10026,
+      "positives": 5013,
+      "negatives": 5013
+    },
+    "fold_3_test.csv": {
+      "pairs": 20014,
+      "positives": 10007,
+      "negatives": 10007
+    },
+    "fold_4_train.csv": {
+      "pairs": 70038,
+      "positives": 35019,
+      "negatives": 35019
+    },
+    "fold_4_val.csv": {
+      "pairs": 10026,
+      "positives": 5013,
+      "negatives": 5013
+    },
+    "fold_4_test.csv": {
+      "pairs": 20002,
+      "positives": 10001,
+      "negatives": 10001
+    },
+    "fold_5_train.csv": {
+      "pairs": 70044,
+      "positives": 35022,
+      "negatives": 35022
+    },
+    "fold_5_val.csv": {
+      "pairs": 10026,
+      "positives": 5013,
+      "negatives": 5013
+    },
+    "fold_5_test.csv": {
+      "pairs": 19996,
+      "positives": 9998,
+      "negatives": 9998
+    }
+  }
+}

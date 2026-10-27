@@ -1,0 +1,19 @@
+{
+  "model_key": "DeepTraSynergy",
+  "fold": 1,
+  "seed": 42,
+  "subsample": 20000,
+  "selection_metric": "val_AUPRC",
+  "val_AUROC": 0.9708783522859095,
+  "val_AUPRC": 0.9643031315825836,
+  "config": {
+    "layers": 4,
+    "head_hidden": [
+      256,
+      256,
+      128
+    ],
+    "dropout": 0.1,
+    "lr": 0.001
+  }
+}

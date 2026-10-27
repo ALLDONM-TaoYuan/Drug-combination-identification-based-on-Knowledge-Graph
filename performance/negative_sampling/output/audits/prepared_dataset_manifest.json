@@ -1,0 +1,155 @@
+{
+  "fixed_val_test": "S1_uniform datasets for the matching seed",
+  "runs": {
+    "mean_euclidean_aed_0.9/seed_42": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_0.9/seed_52": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_0.9/seed_62": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_0.9/seed_72": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_0.9/seed_82": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.0/seed_42": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.0/seed_52": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.0/seed_62": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.0/seed_72": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.0/seed_82": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.1/seed_42": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.1/seed_52": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.1/seed_62": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.1/seed_72": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "mean_euclidean_aed_1.1/seed_82": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_0.9/seed_42": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_0.9/seed_52": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_0.9/seed_62": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_0.9/seed_72": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_0.9/seed_82": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.0/seed_42": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.0/seed_52": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.0/seed_62": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.0/seed_72": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.0/seed_82": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.1/seed_42": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.1/seed_52": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.1/seed_62": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.1/seed_72": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    },
+    "rms_aed_1.1/seed_82": {
+      "positive": 6981,
+      "negative": 6981,
+      "duplicate_negative": 0
+    }
+  }
+}

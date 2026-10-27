@@ -1,0 +1,19 @@
+{
+  "model_key": "DeepDDS",
+  "fold": 1,
+  "seed": 42,
+  "subsample": 20000,
+  "selection_metric": "val_AUPRC",
+  "val_AUROC": 0.875139143632099,
+  "val_AUPRC": 0.8638298647623764,
+  "config": {
+    "heads": 8,
+    "hidden": 512,
+    "head_hidden": [
+      256,
+      128
+    ],
+    "dropout": 0.2,
+    "lr": 0.0001
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "model_key": "KGP-DC",
+  "fold": 1,
+  "seed": 42,
+  "subsample": 20000,
+  "selection_metric": "val_AUPRC",
+  "val_AUROC": 0.9929923901002952,
+  "val_AUPRC": 0.9901149282024019,
+  "config": {
+    "max_depth": 4,
+    "learning_rate": 0.08,
+    "subsample": 0.8,
+    "colsample_bytree": 0.4,
+    "min_child_weight": 10.0,
+    "reg_lambda": 10.0,
+    "reg_alpha": 0.0
+  }
+}

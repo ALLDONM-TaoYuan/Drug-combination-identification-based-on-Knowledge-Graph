@@ -1,0 +1,66 @@
+{
+  "definition": {
+    "mean_euclidean": "weighted mean of target-combination Euclidean distances",
+    "rms": "root weighted mean square of target-combination Euclidean distances",
+    "symmetry": "average both drug orientations",
+    "feature_mode": "SMILES + independent Target combinations; no target mean-pooling"
+  },
+  "candidate_count": 2283889,
+  "train_positive_count": 6981,
+  "required_negative_count": 6981,
+  "methods": {
+    "mean_euclidean": {
+      "aed": 50.27261972257565,
+      "min": 33.70253372192383,
+      "max": 124.908203125,
+      "std": 8.675589561462402,
+      "thresholds": {
+        "0.9": {
+          "threshold": 45.245357750318085,
+          "eligible_count": 1535142,
+          "required_count": 6981,
+          "enough_for_1_to_1": true
+        },
+        "1.0": {
+          "threshold": 50.27261972257565,
+          "eligible_count": 988209,
+          "required_count": 6981,
+          "enough_for_1_to_1": true
+        },
+        "1.1": {
+          "threshold": 55.29988169483322,
+          "eligible_count": 542336,
+          "required_count": 6981,
+          "enough_for_1_to_1": true
+        }
+      }
+    },
+    "rms": {
+      "aed": 50.37988939798463,
+      "min": 33.70262908935547,
+      "max": 127.74356079101562,
+      "std": 8.796263694763184,
+      "thresholds": {
+        "0.9": {
+          "threshold": 45.34190045818617,
+          "eligible_count": 1526868,
+          "required_count": 6981,
+          "enough_for_1_to_1": true
+        },
+        "1.0": {
+          "threshold": 50.37988939798463,
+          "eligible_count": 984882,
+          "required_count": 6981,
+          "enough_for_1_to_1": true
+        },
+        "1.1": {
+          "threshold": 55.417878337783094,
+          "eligible_count": 550350,
+          "required_count": 6981,
+          "enough_for_1_to_1": true
+        }
+      }
+    }
+  },
+  "audit_passed": true
+}

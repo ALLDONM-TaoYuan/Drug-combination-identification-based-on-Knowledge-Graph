@@ -1,0 +1,27 @@
+{
+  "group": "rms_aed_0.9",
+  "seed": 82,
+  "params": {
+    "objective": "binary:logistic",
+    "eval_metric": [
+      "logloss",
+      "auc"
+    ],
+    "tree_method": "hist",
+    "device": "cuda",
+    "max_bin": 64,
+    "nthread": 2,
+    "seed": 82,
+    "learning_rate": 0.05,
+    "max_depth": 4,
+    "subsample": 0.6,
+    "colsample_bytree": 0.6,
+    "reg_alpha": 5.0,
+    "reg_lambda": 10.0,
+    "gamma": 1.0
+  },
+  "target_combinations_preserved": true,
+  "target_combination_policy": "stable_hash_subset_without_pooling",
+  "max_target_combinations_per_pair": 16,
+  "training_batch_size": 128
+}

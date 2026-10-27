@@ -1,0 +1,16 @@
+{
+  "model_key": "KGNN",
+  "fold": 1,
+  "seed": 42,
+  "subsample": 20000,
+  "selection_metric": "val_AUPRC",
+  "val_AUROC": 0.9340309024909087,
+  "val_AUPRC": 0.9449812744215496,
+  "config": {
+    "embed_dim": 64,
+    "n_depth": 3,
+    "aggregator": "sum",
+    "lr": 0.02,
+    "batch_size": 1024
+  }
+}

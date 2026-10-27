@@ -1,0 +1,36 @@
+{
+  "seed": 42,
+  "mode": "warm",
+  "split_method": "pair_level_0.6_0.2_0.2_shared_drugs",
+  "drug_policy": "no drug-level holdout: every evaluated pair has two drugs that are seen during training; the strict unseen-drug setting is the separate cold-start experiment",
+  "drugs": 2930,
+  "positive_pairs": {
+    "train": 30431,
+    "val": 9795,
+    "test": 9807
+  },
+  "negative_pairs": {
+    "train": 30431,
+    "val": 9795,
+    "test": 9807
+  },
+  "pairs": {
+    "train": 60862,
+    "val": 19590,
+    "test": 19614
+  },
+  "global_positive_pairs": 50033,
+  "global_negative_pairs": 50033,
+  "kg_policy": {
+    "combination": "training positives of the fold only",
+    "interaction": "drug-target interactions of every drug"
+  },
+  "negative_policy": "one negative per positive, stratified by the number of drug-target interactions, sampled without replacement and disjoint across the splits",
+  "kg_embedding": {
+    "source": "cold_start/kg_embedding/warm/train",
+    "combination_edges": 30431,
+    "interaction_edges": 13252,
+    "held_out_pairs_in_graph": 0
+  },
+  "note": "counts are the numbers actually present in the committed pair metadata, i.e. after the knowledge-graph availability filter"
+}

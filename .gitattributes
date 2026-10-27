@@ -1,0 +1,20 @@
+# Normalise line endings: store LF in the repository, check out LF on Linux and
+# CRLF on Windows for text files.
+* text=auto eol=lf
+
+*.py    text diff=python
+*.md    text
+*.txt   text
+*.csv   text
+*.json  text
+*.yaml  text
+*.yml   text
+
+# Binary assets
+*.npy   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.pdf   binary
+*.docx  binary
+*.npz   binary

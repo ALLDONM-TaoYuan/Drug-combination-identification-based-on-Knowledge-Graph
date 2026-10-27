@@ -1,0 +1,16 @@
+{
+  "seed": 42,
+  "mode": "single",
+  "split_method": "random_0.6_0.2_0.2_pools",
+  "drugs": {
+    "train": 2092,
+    "val": 697,
+    "test": 698
+  },
+  "positive_pairs": {
+    "train": 18168,
+    "val": 11284,
+    "test": 13001
+  },
+  "global_positive_pairs": 51212
+}

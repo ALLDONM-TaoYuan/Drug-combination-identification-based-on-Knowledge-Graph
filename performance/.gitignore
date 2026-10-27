@@ -1,0 +1,50 @@
+# Python / editor artefacts
+__pycache__/
+*.py[cod]
+*.log
+*.err
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# ---------------------------------------------------------------------------
+# Superseded top-level performance outputs (kept out of version control)
+# ---------------------------------------------------------------------------
+/results/
+/feature_batches/
+/smiles/missed_drugs.csv
+/targets/missed_targets.csv
+
+# ---------------------------------------------------------------------------
+# negative_sampling: regenerable experiment artefacts.
+# The summary reports under output/reports_gpu_lite/ and the per-run metric
+# JSON files are version controlled; the bulky intermediates are not.
+# ---------------------------------------------------------------------------
+/negative_sampling/output/datasets/
+/negative_sampling/output/results/
+/negative_sampling/output/splits/
+/negative_sampling/output/audits/*.npz
+/negative_sampling/output/smoke_cache/
+/negative_sampling/output/gpu_lite_smoke_cache/
+/negative_sampling/output/results_gpu_lite/**/xgboost_model.json
+/negative_sampling/output/results_gpu_lite/**/*_pair_predictions.csv
+
+# ---------------------------------------------------------------------------
+# baseline_experiments: regenerable artefacts.
+#   data/split_data/*.npy  - drug-level assets are copies of the files that are
+#                             version controlled under cold_start/, and the
+#                             pair-level feature matrices are large and are
+#                             rebuilt with `prepare_assets.py --rebuild-features`.
+#   work/fold_features/    - per-fold feature cache, rebuilt on demand.
+# The pair metadata, the fold definitions, the predictions and the result
+# tables are version controlled on purpose.
+# ---------------------------------------------------------------------------
+/baseline_experiments/data/split_data/*.npy
+/baseline_experiments/data/warm_data/
+/baseline_experiments/work/fold_features/
+/baseline_experiments/work/*.log
+/baseline_experiments/work/*.err
+/baseline_experiments/work/_*.py
+/baseline_experiments/work/run_remaining.ps1
+/baseline_experiments/work/_backup_before_strip/
+/baseline_experiments/flame

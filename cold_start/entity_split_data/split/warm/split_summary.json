@@ -1,0 +1,28 @@
+{
+  "seed": 42,
+  "mode": "warm",
+  "split_method": "pair_level_0.6_0.2_0.2_shared_drugs",
+  "drug_policy": "no drug-level holdout: all SMILES-capable drugs are shared by every split, so both endpoints of any evaluated pair are seen drugs",
+  "drugs": {
+    "train": 3487,
+    "val": 3487,
+    "test": 3487
+  },
+  "positive_pairs": {
+    "train": 30727,
+    "val": 10242,
+    "test": 10243
+  },
+  "global_positive_pairs": 51212,
+  "drugs_never_in_any_positive_pair": 12,
+  "kg_policy": {
+    "combination": "train_pairs.csv only",
+    "interaction": "DTI of every drug"
+  },
+  "negative_policy": "sampled from the shared all-drug pool, excluding train/val/test positives",
+  "skipped_ddi": {
+    "self_loop": 40,
+    "no_smiles_endpoint": 0
+  },
+  "database_dir": "E:\\KGP-DC\\SynDrugMD KG\\database\\Triples"
+}

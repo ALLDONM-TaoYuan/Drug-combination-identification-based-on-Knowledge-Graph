@@ -1,0 +1,47 @@
+# Environment for the experiments in this workspace.
+#
+# Two reported result sets were produced in two different environments.  The
+# exact pins that produced each of them are listed below; the requirement
+# block that follows is the union with compatible ranges, so that a single
+# environment can run both modules.
+#
+#   baseline_experiments  (results/table.csv, results/significance.csv)
+#       numpy 1.23.5, pandas 2.0.3, scipy 1.10.1, scikit-learn 1.3.2,
+#       xgboost 2.1.4, matplotlib 3.7.5, torch 2.4.1, pykeen 1.10.2,
+#       rdkit 2024.3.5, Python 3.10 / 3.11
+#
+#   negative_sampling     (output/reports_gpu_lite/)
+#       numpy 2.x, pandas 2.x, xgboost >= 3.0, cupy-cuda12x (GPU only),
+#       Python 3.11 / 3.12
+#
+# ---------------------------------------------------------------------------
+# Core
+# ---------------------------------------------------------------------------
+numpy>=1.23.5
+pandas>=2.0.3
+scipy>=1.10.1
+scikit-learn==1.3.2
+matplotlib>=3.7.5
+
+# ---------------------------------------------------------------------------
+# Modelling
+# ---------------------------------------------------------------------------
+xgboost>=2.1.4
+torch>=2.0
+pykeen==1.10.2
+
+# ---------------------------------------------------------------------------
+# Cheminformatics
+# ---------------------------------------------------------------------------
+rdkit>=2023.09
+
+# ---------------------------------------------------------------------------
+# Utilities
+# ---------------------------------------------------------------------------
+pyyaml>=6.0
+tqdm>=4.66
+
+# Optional, GPU only, negative_sampling module.
+# For CUDA 12:  python -m pip install cupy-cuda12x
+# For CUDA 13:  python -m pip install cupy-cuda13x
+# cupy-cuda12x>=13.0

@@ -1,0 +1,348 @@
+{
+  "seed": 42,
+  "positives_kept": true,
+  "negative_policy": "split-disjoint DTI-matched (rebuilt)",
+  "pool_size": 2930,
+  "splits": {
+    "train": {
+      "pairs": 60862,
+      "positives": 30431,
+      "negatives": 30431,
+      "finite": true,
+      "quota": {
+        "0-0": {
+          "needed": 3056,
+          "sampled": 3056,
+          "candidates": 1827702
+        },
+        "0-1": {
+          "needed": 1549,
+          "sampled": 1549,
+          "candidates": 261893
+        },
+        "0-2": {
+          "needed": 724,
+          "sampled": 724,
+          "candidates": 207507
+        },
+        "0-3-5": {
+          "needed": 1746,
+          "sampled": 1746,
+          "candidates": 512235
+        },
+        "0-6-10": {
+          "needed": 1115,
+          "sampled": 1115,
+          "candidates": 323643
+        },
+        "0-11+": {
+          "needed": 3742,
+          "sampled": 3742,
+          "candidates": 624071
+        },
+        "1-1": {
+          "needed": 419,
+          "sampled": 419,
+          "candidates": 8715
+        },
+        "1-2": {
+          "needed": 555,
+          "sampled": 555,
+          "candidates": 14153
+        },
+        "1-3-5": {
+          "needed": 1501,
+          "sampled": 1501,
+          "candidates": 34624
+        },
+        "1-6-10": {
+          "needed": 925,
+          "sampled": 925,
+          "candidates": 21961
+        },
+        "1-11+": {
+          "needed": 1955,
+          "sampled": 1955,
+          "candidates": 42181
+        },
+        "2-2": {
+          "needed": 142,
+          "sampled": 142,
+          "candidates": 5655
+        },
+        "2-3-5": {
+          "needed": 847,
+          "sampled": 847,
+          "candidates": 27938
+        },
+        "2-6-10": {
+          "needed": 499,
+          "sampled": 499,
+          "candidates": 17694
+        },
+        "2-11+": {
+          "needed": 1145,
+          "sampled": 1145,
+          "candidates": 33978
+        },
+        "3-5-3-5": {
+          "needed": 1217,
+          "sampled": 1217,
+          "candidates": 34036
+        },
+        "3-5-6-10": {
+          "needed": 1530,
+          "sampled": 1530,
+          "candidates": 43209
+        },
+        "3-5-11+": {
+          "needed": 3204,
+          "sampled": 3204,
+          "candidates": 83125
+        },
+        "6-10-6-10": {
+          "needed": 448,
+          "sampled": 448,
+          "candidates": 13599
+        },
+        "6-10-11+": {
+          "needed": 1963,
+          "sampled": 1963,
+          "candidates": 52618
+        },
+        "11+-11+": {
+          "needed": 2149,
+          "sampled": 2149,
+          "candidates": 50415
+        }
+      }
+    },
+    "val": {
+      "pairs": 19590,
+      "positives": 9795,
+      "negatives": 9795,
+      "finite": true,
+      "quota": {
+        "0-0": {
+          "needed": 966,
+          "sampled": 966,
+          "candidates": 1824646
+        },
+        "0-1": {
+          "needed": 423,
+          "sampled": 423,
+          "candidates": 260344
+        },
+        "0-2": {
+          "needed": 248,
+          "sampled": 248,
+          "candidates": 206783
+        },
+        "0-3-5": {
+          "needed": 598,
+          "sampled": 598,
+          "candidates": 510489
+        },
+        "0-6-10": {
+          "needed": 397,
+          "sampled": 397,
+          "candidates": 322528
+        },
+        "0-11+": {
+          "needed": 1138,
+          "sampled": 1138,
+          "candidates": 620329
+        },
+        "1-1": {
+          "needed": 159,
+          "sampled": 159,
+          "candidates": 8296
+        },
+        "1-2": {
+          "needed": 150,
+          "sampled": 150,
+          "candidates": 13598
+        },
+        "1-3-5": {
+          "needed": 475,
+          "sampled": 475,
+          "candidates": 33123
+        },
+        "1-6-10": {
+          "needed": 258,
+          "sampled": 258,
+          "candidates": 21036
+        },
+        "1-11+": {
+          "needed": 617,
+          "sampled": 617,
+          "candidates": 40226
+        },
+        "2-2": {
+          "needed": 41,
+          "sampled": 41,
+          "candidates": 5513
+        },
+        "2-3-5": {
+          "needed": 282,
+          "sampled": 282,
+          "candidates": 27091
+        },
+        "2-6-10": {
+          "needed": 162,
+          "sampled": 162,
+          "candidates": 17195
+        },
+        "2-11+": {
+          "needed": 357,
+          "sampled": 357,
+          "candidates": 32833
+        },
+        "3-5-3-5": {
+          "needed": 404,
+          "sampled": 404,
+          "candidates": 32819
+        },
+        "3-5-6-10": {
+          "needed": 502,
+          "sampled": 502,
+          "candidates": 41679
+        },
+        "3-5-11+": {
+          "needed": 1102,
+          "sampled": 1102,
+          "candidates": 79921
+        },
+        "6-10-6-10": {
+          "needed": 169,
+          "sampled": 169,
+          "candidates": 13151
+        },
+        "6-10-11+": {
+          "needed": 672,
+          "sampled": 672,
+          "candidates": 50655
+        },
+        "11+-11+": {
+          "needed": 675,
+          "sampled": 675,
+          "candidates": 48266
+        }
+      }
+    },
+    "test": {
+      "pairs": 19614,
+      "positives": 9807,
+      "negatives": 9807,
+      "finite": true,
+      "quota": {
+        "0-0": {
+          "needed": 931,
+          "sampled": 931,
+          "candidates": 1823680
+        },
+        "0-1": {
+          "needed": 405,
+          "sampled": 405,
+          "candidates": 259921
+        },
+        "0-2": {
+          "needed": 256,
+          "sampled": 256,
+          "candidates": 206535
+        },
+        "0-3-5": {
+          "needed": 556,
+          "sampled": 556,
+          "candidates": 509891
+        },
+        "0-6-10": {
+          "needed": 395,
+          "sampled": 395,
+          "candidates": 322131
+        },
+        "0-11+": {
+          "needed": 1084,
+          "sampled": 1084,
+          "candidates": 619191
+        },
+        "1-1": {
+          "needed": 160,
+          "sampled": 160,
+          "candidates": 8137
+        },
+        "1-2": {
+          "needed": 184,
+          "sampled": 184,
+          "candidates": 13448
+        },
+        "1-3-5": {
+          "needed": 522,
+          "sampled": 522,
+          "candidates": 32648
+        },
+        "1-6-10": {
+          "needed": 316,
+          "sampled": 316,
+          "candidates": 20778
+        },
+        "1-11+": {
+          "needed": 649,
+          "sampled": 649,
+          "candidates": 39609
+        },
+        "2-2": {
+          "needed": 48,
+          "sampled": 48,
+          "candidates": 5472
+        },
+        "2-3-5": {
+          "needed": 254,
+          "sampled": 254,
+          "candidates": 26809
+        },
+        "2-6-10": {
+          "needed": 175,
+          "sampled": 175,
+          "candidates": 17033
+        },
+        "2-11+": {
+          "needed": 381,
+          "sampled": 381,
+          "candidates": 32476
+        },
+        "3-5-3-5": {
+          "needed": 389,
+          "sampled": 389,
+          "candidates": 32415
+        },
+        "3-5-6-10": {
+          "needed": 489,
+          "sampled": 489,
+          "candidates": 41177
+        },
+        "3-5-11+": {
+          "needed": 1070,
+          "sampled": 1070,
+          "candidates": 78819
+        },
+        "6-10-6-10": {
+          "needed": 149,
+          "sampled": 149,
+          "candidates": 12982
+        },
+        "6-10-11+": {
+          "needed": 677,
+          "sampled": 677,
+          "candidates": 49983
+        },
+        "11+-11+": {
+          "needed": 717,
+          "sampled": 717,
+          "candidates": 47591
+        }
+      }
+    }
+  },
+  "unique_negatives": 50033
+}

@@ -1,0 +1,163 @@
+{
+  "mode": "warm",
+  "split": "train",
+  "data_root": "E:\\KGP-DC\\SynDrugMD KG\\cold_start\\entity_split_data",
+  "kg_dir": "E:\\KGP-DC\\SynDrugMD KG\\cold_start\\kg_embedding\\warm\\train",
+  "output_dir": "E:\\KGP-DC\\SynDrugMD KG\\cold_start\\warm_start\\features",
+  "target_policy": "cartesian combinations with weight 1/(n1*n2); closed-form mean aggregation",
+  "negative_policy": "DtiFrequencyMatchedStrata",
+  "positive_pairs": 30431,
+  "skipped_positive_no_fold_kg": 296,
+  "negative_pairs": 30431,
+  "pairs": 60862,
+  "shape": [
+    60862,
+    3840
+  ],
+  "feature_dim": 3840,
+  "seed": 42,
+  "finite": true,
+  "kg_usable_drugs_in_fold": 2930,
+  "zero_target_placeholder_row": 1619,
+  "annotation_bit_positive_rate": 0.6078998389799876,
+  "annotation_bit_negative_rate": 0.6078998389799876,
+  "annotation_bit_auc": 0.5,
+  "sampling": {
+    "quota_pairs": 30431,
+    "matched_negatives": 30431,
+    "surplus_negatives": 0,
+    "stratum_deficit": 0,
+    "per_stratum": {
+      "0-0": {
+        "positives": 3056,
+        "negatives": 3056,
+        "candidates": 1827702,
+        "deficit": 0
+      },
+      "0-1": {
+        "positives": 1549,
+        "negatives": 1549,
+        "candidates": 261893,
+        "deficit": 0
+      },
+      "0-2": {
+        "positives": 724,
+        "negatives": 724,
+        "candidates": 207507,
+        "deficit": 0
+      },
+      "0-3-5": {
+        "positives": 1746,
+        "negatives": 1746,
+        "candidates": 512235,
+        "deficit": 0
+      },
+      "0-6-10": {
+        "positives": 1115,
+        "negatives": 1115,
+        "candidates": 323643,
+        "deficit": 0
+      },
+      "0-11+": {
+        "positives": 3742,
+        "negatives": 3742,
+        "candidates": 624071,
+        "deficit": 0
+      },
+      "1-1": {
+        "positives": 419,
+        "negatives": 419,
+        "candidates": 8715,
+        "deficit": 0
+      },
+      "1-2": {
+        "positives": 555,
+        "negatives": 555,
+        "candidates": 14153,
+        "deficit": 0
+      },
+      "1-3-5": {
+        "positives": 1501,
+        "negatives": 1501,
+        "candidates": 34624,
+        "deficit": 0
+      },
+      "1-6-10": {
+        "positives": 925,
+        "negatives": 925,
+        "candidates": 21961,
+        "deficit": 0
+      },
+      "1-11+": {
+        "positives": 1955,
+        "negatives": 1955,
+        "candidates": 42181,
+        "deficit": 0
+      },
+      "2-2": {
+        "positives": 142,
+        "negatives": 142,
+        "candidates": 5655,
+        "deficit": 0
+      },
+      "2-3-5": {
+        "positives": 847,
+        "negatives": 847,
+        "candidates": 27938,
+        "deficit": 0
+      },
+      "2-6-10": {
+        "positives": 499,
+        "negatives": 499,
+        "candidates": 17694,
+        "deficit": 0
+      },
+      "2-11+": {
+        "positives": 1145,
+        "negatives": 1145,
+        "candidates": 33978,
+        "deficit": 0
+      },
+      "3-5-3-5": {
+        "positives": 1217,
+        "negatives": 1217,
+        "candidates": 34036,
+        "deficit": 0
+      },
+      "3-5-6-10": {
+        "positives": 1530,
+        "negatives": 1530,
+        "candidates": 43209,
+        "deficit": 0
+      },
+      "3-5-11+": {
+        "positives": 3204,
+        "negatives": 3204,
+        "candidates": 83125,
+        "deficit": 0
+      },
+      "6-10-6-10": {
+        "positives": 448,
+        "negatives": 448,
+        "candidates": 13599,
+        "deficit": 0
+      },
+      "6-10-11+": {
+        "positives": 1963,
+        "negatives": 1963,
+        "candidates": 52618,
+        "deficit": 0
+      },
+      "11+-11+": {
+        "positives": 2149,
+        "negatives": 2149,
+        "candidates": 50415,
+        "deficit": 0
+      }
+    }
+  },
+  "cartesian_verification": {
+    "checked": 200,
+    "max_abs_error": 7.450580596923828e-08
+  }
+}

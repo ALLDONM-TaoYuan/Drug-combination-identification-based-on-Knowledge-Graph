@@ -1,0 +1,18 @@
+{
+  "model_key": "GraRep",
+  "fold": 1,
+  "seed": 42,
+  "subsample": 20000,
+  "selection_metric": "val_AUPRC",
+  "val_AUROC": 0.9952688474780134,
+  "val_AUPRC": 0.9930638030682354,
+  "config": {
+    "head": "mlp",
+    "hidden": [
+      512
+    ],
+    "dropout": 0.3,
+    "lr": 0.001,
+    "weight_decay": 0.0001
+  }
+}

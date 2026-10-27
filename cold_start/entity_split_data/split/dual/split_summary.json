@@ -1,0 +1,20 @@
+{
+  "seed": 42,
+  "mode": "dual",
+  "split_method": "random_0.6_0.2_0.2_disjoint_drugs",
+  "drugs": {
+    "train": 2092,
+    "val": 697,
+    "test": 698
+  },
+  "positive_pairs": {
+    "train": 18168,
+    "val": 1775,
+    "test": 2371
+  },
+  "global_positive_pairs": 51212,
+  "skipped_ddi": {
+    "self_loop": 40,
+    "no_smiles_endpoint": 0
+  }
+}

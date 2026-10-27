@@ -1,0 +1,33 @@
+project:
+  # Paths are resolved relative to this file's directory
+  # (performance/negative_sampling).
+  #   base_project      -> the cold-start workspace at the repository root
+  #   legacy_experiment -> the single-cold workspace that owns the unlabelled
+  #                       candidate pool; it is an external, read-only input and
+  #                       is not redistributed with this repository
+  base_project: ..\..\cold_start
+  legacy_experiment: ..\..\negative_sample
+  output_dir: output
+
+experiment:
+  seeds: [42, 52, 62, 72, 82]
+  thresholds: [0.9, 1.0, 1.1]
+  main_threshold: 1.1
+  positive_negative_ratio: 1.0
+  distance_batch_size: 512
+  # GPU-lite mode: bound both transient batches and total combo rows.
+  training_batch_size: 128
+  max_target_combinations_per_pair: 16
+  max_quantile_batches: 4
+  result_dir: results_gpu_lite
+  device: cuda
+  max_bin: 64
+  nthread: 2
+
+inputs:
+  candidate_dir: output/splits
+  train_candidates: train_unlabeled_candidates.npz
+  val_candidates: val_unlabeled_candidates.npz
+  test_candidates: test_unlabeled_candidates.npz
+  source_split_audit: ..\negative_sample\output\audits\single_cold_split_audit.json
+  source_manifest: ..\negative_sample\output\audits\candidate_pool_manifest.json

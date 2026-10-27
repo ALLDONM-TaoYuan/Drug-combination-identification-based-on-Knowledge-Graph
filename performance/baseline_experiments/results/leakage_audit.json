@@ -1,0 +1,247 @@
+{
+  "warm_split": {
+    "level": "warm 60/20/20 pair-level split",
+    "sizes": {
+      "train": 60862,
+      "val": 19590,
+      "test": 19614
+    },
+    "positives": {
+      "train": 30431,
+      "val": 9795,
+      "test": 9807
+    },
+    "negatives": {
+      "train": 30431,
+      "val": 9795,
+      "test": 9807
+    },
+    "pair_overlap": {
+      "train&val": 0,
+      "train&test": 0,
+      "val&test": 0
+    },
+    "positive_negative_conflict": {
+      "train(neg) vs val(pos)": 0,
+      "train(neg) vs test(pos)": 0,
+      "val(neg) vs test(pos)": 0
+    },
+    "negative_negative_overlap": {
+      "train(neg) vs val(neg)": 0,
+      "train(neg) vs test(neg)": 0,
+      "val(neg) vs test(neg)": 0
+    },
+    "drug_overlap": {
+      "train&val": 2833,
+      "train&test": 2810,
+      "val&test": 2720
+    },
+    "self_pairs": 0,
+    "non_canonical_pairs": 0,
+    "global_positive_negative_conflict": 0,
+    "total_pairs": 100066,
+    "passed": true
+  },
+  "folds": {
+    "level": "pair-level stratified 5-fold cross-validation",
+    "folds": [
+      {
+        "fold": 1,
+        "sizes": {
+          "train": 70014,
+          "val": 10018,
+          "test": 20034
+        },
+        "positives": {
+          "train": 35007,
+          "val": 5009,
+          "test": 10017
+        },
+        "pair_overlap": {
+          "train&val": 0,
+          "train&test": 0,
+          "val&test": 0
+        },
+        "positive_negative_conflict": {
+          "train(neg) vs val(pos)": 0,
+          "train(neg) vs test(pos)": 0,
+          "val(neg) vs test(pos)": 0
+        },
+        "drug_overlap": {
+          "train&val": 2556,
+          "train&test": 2846,
+          "val&test": 2489
+        },
+        "self_pairs": 0,
+        "passed": true
+      },
+      {
+        "fold": 2,
+        "sizes": {
+          "train": 70020,
+          "val": 10026,
+          "test": 20020
+        },
+        "positives": {
+          "train": 35010,
+          "val": 5013,
+          "test": 10010
+        },
+        "pair_overlap": {
+          "train&val": 0,
+          "train&test": 0,
+          "val&test": 0
+        },
+        "positive_negative_conflict": {
+          "train(neg) vs val(pos)": 0,
+          "train(neg) vs test(pos)": 0,
+          "val(neg) vs test(pos)": 0
+        },
+        "drug_overlap": {
+          "train&val": 2551,
+          "train&test": 2835,
+          "val&test": 2474
+        },
+        "self_pairs": 0,
+        "passed": true
+      },
+      {
+        "fold": 3,
+        "sizes": {
+          "train": 70026,
+          "val": 10026,
+          "test": 20014
+        },
+        "positives": {
+          "train": 35013,
+          "val": 5013,
+          "test": 10007
+        },
+        "pair_overlap": {
+          "train&val": 0,
+          "train&test": 0,
+          "val&test": 0
+        },
+        "positive_negative_conflict": {
+          "train(neg) vs val(pos)": 0,
+          "train(neg) vs test(pos)": 0,
+          "val(neg) vs test(pos)": 0
+        },
+        "drug_overlap": {
+          "train&val": 2573,
+          "train&test": 2833,
+          "val&test": 2498
+        },
+        "self_pairs": 0,
+        "passed": true
+      },
+      {
+        "fold": 4,
+        "sizes": {
+          "train": 70038,
+          "val": 10026,
+          "test": 20002
+        },
+        "positives": {
+          "train": 35019,
+          "val": 5013,
+          "test": 10001
+        },
+        "pair_overlap": {
+          "train&val": 0,
+          "train&test": 0,
+          "val&test": 0
+        },
+        "positive_negative_conflict": {
+          "train(neg) vs val(pos)": 0,
+          "train(neg) vs test(pos)": 0,
+          "val(neg) vs test(pos)": 0
+        },
+        "drug_overlap": {
+          "train&val": 2580,
+          "train&test": 2844,
+          "val&test": 2512
+        },
+        "self_pairs": 0,
+        "passed": true
+      },
+      {
+        "fold": 5,
+        "sizes": {
+          "train": 70044,
+          "val": 10026,
+          "test": 19996
+        },
+        "positives": {
+          "train": 35022,
+          "val": 5013,
+          "test": 9998
+        },
+        "pair_overlap": {
+          "train&val": 0,
+          "train&test": 0,
+          "val&test": 0
+        },
+        "positive_negative_conflict": {
+          "train(neg) vs val(pos)": 0,
+          "train(neg) vs test(pos)": 0,
+          "val(neg) vs test(pos)": 0
+        },
+        "drug_overlap": {
+          "train&val": 2550,
+          "train&test": 2844,
+          "val&test": 2479
+        },
+        "self_pairs": 0,
+        "passed": true
+      }
+    ],
+    "test_folds_cover_all_pairs": true,
+    "pairs_total": 100066,
+    "pairs_covered": 100066,
+    "passed": true
+  },
+  "kg_isolation": {
+    "level": "knowledge graph isolation",
+    "models": [
+      {
+        "model": "KGNN",
+        "file": "models\\KGNN\\model.py",
+        "uses_fold_splits": true,
+        "builds_graph_from_train_positives": true,
+        "threshold_from_validation": true
+      },
+      {
+        "model": "GraRep + MLP",
+        "file": "models\\GraRep\\model.py",
+        "uses_fold_splits": true,
+        "builds_graph_from_train_positives": true,
+        "threshold_from_validation": true
+      },
+      {
+        "model": "adapted DeepDDS (without cell-line branch)",
+        "file": "models\\DeepDDS\\model.py",
+        "uses_fold_splits": true,
+        "builds_graph_from_train_positives": false,
+        "threshold_from_validation": true
+      },
+      {
+        "model": "adapted DeepTraSynergy (without cell-line branch)",
+        "file": "models\\DeepTraSynergy\\model.py",
+        "uses_fold_splits": true,
+        "builds_graph_from_train_positives": false,
+        "threshold_from_validation": true
+      },
+      {
+        "model": "KGP-DC",
+        "file": "models\\KGP-DC\\model.py",
+        "uses_fold_splits": true,
+        "builds_graph_from_train_positives": true,
+        "threshold_from_validation": true
+      }
+    ],
+    "passed": true,
+    "note": "the static check confirms that every model reads the fold splits and derives its threshold from the validation split; the runtime record of each run in work/runs.csv states the number of graph edges used per fold"
+  },
+  "passed": true
+}
