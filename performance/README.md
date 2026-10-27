@@ -7,6 +7,8 @@ KGP-DC lives. It contains three modules:
 |---|---|
 | `baseline_experiments/` | Leak-free, same-protocol comparison of KGP-DC against four re-implemented literature baselines on pair-level cross-validation. |
 | `negative_sampling/` | Ablation on the negative-sampling strategy: uniform random sampling versus Euclidean / RMS distance screening of the unlabelled pool. |
+| `legacy_published_workflow/` | The originally published workflow, retained unchanged as a read-only reference. |
+| `reference_results/` | The metrics and model artefacts of the originally published workflow. |
 | `../cold_start/` | Strict unseen-drug (single-cold and dual-cold) evaluation with a train-only knowledge graph. |
 
 The original study artefacts are not overwritten by a new run. New runs write
@@ -329,7 +331,25 @@ under `output/reports_gpu_lite/` is the record of the completed run.
 
 ---
 
-## 3. `../cold_start/` -- strict unseen-drug evaluation
+## 3. `legacy_published_workflow/` -- the original published workflow
+
+The code and the pre-trained assets of the originally published pipeline are
+kept unchanged here: the row-level feature construction that expands a drug
+pair into the full Cartesian product of its target combinations (about 8.0 x
+10^6 positive rows on SynDrugMD), the XGBoost training and evaluation script,
+the ChemBERTa and ProtT5 feature extraction scripts, the knowledge-graph
+embedding and the resulting metrics in `../reference_results/`.
+
+It is retained because the reviewers explicitly asked for the scripts that
+reproduce the published dataset expansion, the knowledge-graph construction
+and the published benchmarking. It is **not** the source of any number in the
+revised manuscript, because it splits at the row level *after* the expansion
+and therefore places the same drug pair in several splits. The details are in
+`legacy_published_workflow/README.md`.
+
+---
+
+## 4. `../cold_start/` -- strict unseen-drug evaluation
 
 The pair-level protocol of Section 1 is an interpolation setting. The
 cold-start module provides the inductive setting: drug pools are assigned to
@@ -345,7 +365,7 @@ item of work.
 
 ---
 
-## 4. Known limitations and planned continuation
+## 5. Known limitations and planned continuation
 
 1. **One seed.** The reported baseline table uses seed 42. The planned
    continuation repeats the complete protocol with at least three seeds.
@@ -369,19 +389,23 @@ item of work.
 
 ---
 
-## 5. Reproducibility checklist
+## 6. Reproducibility checklist
 
 | Item | Location |
 |---|---|
-| Fixed seeds | `src/common.py` (`SEEDS`, `SPLIT_SEED`), `data/split_rules.py` |
-| Split and fold rules | `data/split_rules.py` |
-| Negative sampling rules | `data/negative_rebuild.py` |
-| Asset assembly | `data/prepare_assets.py` |
-| Metric definitions | `src/common.py` (`binary_metrics`, `youden_threshold`) |
-| Per-run records | `work/runs.csv` |
-| Per-fold predictions | `work/predictions/` |
-| Hyper-parameter search | `work/tuning/` |
-| Result table | `results/table.csv`, `results/figures.png` |
-| Significance tests | `results/significance.csv`, `results/significance.md` |
-| Leakage audit | `results/leakage_audit.json` |
+| Fixed seeds | `baseline_experiments/src/common.py` (`SEEDS`, `SPLIT_SEED`), `baseline_experiments/data/split_rules.py` |
+| Split and fold rules | `baseline_experiments/data/split_rules.py` |
+| Negative sampling rules | `baseline_experiments/data/negative_rebuild.py` |
+| Asset assembly | `baseline_experiments/data/prepare_assets.py` |
+| Metric definitions | `baseline_experiments/src/common.py` (`binary_metrics`, `youden_threshold`) |
+| Per-run records | `baseline_experiments/work/runs.csv` |
+| Per-fold predictions | `baseline_experiments/work/predictions/` |
+| Hyper-parameter search | `baseline_experiments/work/tuning/` |
+| Result table | `baseline_experiments/results/table.csv`, `baseline_experiments/results/figures.png` |
+| Significance tests | `baseline_experiments/results/significance.csv`, `baseline_experiments/results/significance.md` |
+| Leakage audit | `baseline_experiments/results/leakage_audit.json` |
+| Original published pipeline | `legacy_published_workflow/` (read-only reference) |
+| Original published metrics | `reference_results/` |
+| Negative-sampling ablation report | `negative_sampling/output/reports_gpu_lite/` |
+| Cold-start splits and knowledge graphs | `../cold_start/` |
 | Environment | `../requirements.txt` |

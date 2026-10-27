@@ -11,17 +11,28 @@ import time
 warnings.filterwarnings('ignore')
 sns.set_style("whitegrid")
 
+# All paths are resolved relative to this file, so the script can be started
+# from any working directory.
+MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = os.path.dirname(MODULE_DIR)
+# The DrugCombDB knowledge-graph embedding is version controlled under
+# "diffierent classifical/DrugCombDB/dif classifier/embeddings".
+DB_KG_DIR = os.path.join(REPO_DIR, 'diffierent classifical', 'DrugCombDB',
+                         'dif classifier', 'embeddings')
+
 
 def load_syn_drug_morgan():
-    drug_morgan = np.load('./syn_morgan_features/rdkit_features.npy')
-    drug_ids = np.load('./syn_morgan_features/rdkit_ids.npy')
+    drug_morgan = np.load(os.path.join(MODULE_DIR, 'syn_morgan_features', 'rdkit_features.npy'))
+    drug_ids = np.load(os.path.join(MODULE_DIR, 'syn_morgan_features', 'rdkit_ids.npy'))
     return drug_morgan, drug_ids
 
 
 def load_syn_drug_combinations_from_kg():
-    entity_mapping = pd.read_csv('../database/Embeddings/entity_mapping.csv')
-    mapped_triples = np.load('../database/Embeddings/mapped_triples.npy')
-    drug_df = pd.read_csv('./Syn_id_smiles.csv')
+    entity_mapping = pd.read_csv(os.path.join(REPO_DIR, 'triples', 'embeddings',
+                                               'entity_mapping.csv'))
+    mapped_triples = np.load(os.path.join(REPO_DIR, 'triples', 'embeddings',
+                                          'mapped_triples.npy'))
+    drug_df = pd.read_csv(os.path.join(MODULE_DIR, 'Syn_id_smiles.csv'))
 
     entity_id_to_mapping = {row['id']: row['entity'] for _, row in entity_mapping.iterrows()}
     drug_name_to_id = {row['drug_name']: row['id'] for _, row in drug_df.iterrows()}
@@ -49,15 +60,15 @@ def load_syn_drug_combinations_from_kg():
 
 
 def load_db_drug_morgan():
-    drug_morgan = np.load('./db_morgan_features/rdkit_features.npy')
-    drug_ids = np.load('./db_morgan_features/rdkit_ids.npy')
+    drug_morgan = np.load(os.path.join(MODULE_DIR, 'db_morgan_features', 'rdkit_features.npy'))
+    drug_ids = np.load(os.path.join(MODULE_DIR, 'db_morgan_features', 'rdkit_ids.npy'))
     return drug_morgan, drug_ids
 
 
 def load_db_drug_combinations_from_kg():
-    entity_mapping = pd.read_csv('../../DrugCombDB KG/Predict/aug_KG/augmented_emb/entity_mapping.csv')
-    mapped_triples = np.load('../../DrugCombDB KG/Predict/aug_KG/augmented_emb/mapped_triples.npy')
-    drug_df = pd.read_csv('./DB_id_smiles.csv')
+    entity_mapping = pd.read_csv(os.path.join(DB_KG_DIR, 'entity_mapping.csv'))
+    mapped_triples = np.load(os.path.join(DB_KG_DIR, 'mapped_triples.npy'))
+    drug_df = pd.read_csv(os.path.join(MODULE_DIR, 'DB_id_smiles.csv'))
 
     entity_id_to_mapping = {row['id']: row['entity'] for _, row in entity_mapping.iterrows()}
     drug_name_to_id = {row['drug_name']: row['id'] for _, row in drug_df.iterrows()}
@@ -275,14 +286,15 @@ def create_complete_analysis_figure(syn_drug_sim_matrix, syn_combo_sim_matrix,
 
     plt.subplots_adjust(left=0.05, right=0.9, bottom=0.1, top=0.95, wspace=0.3, hspace=0.4)
 
-    plt.savefig('complete_analysis.png', dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(MODULE_DIR, 'complete_analysis.png'), dpi=300,
+                bbox_inches='tight')
     plt.show()
 
 
 def save_results(syn_drug_sim_matrix, syn_drug_ids, syn_combo_sim_matrix, syn_combo_df,
                  db_drug_sim_matrix, db_drug_ids, db_combo_sim_matrix, db_combo_df,
                  syn_drug_stats, syn_combo_stats, db_drug_stats, db_combo_stats):
-    output_dir = 'drug_combo_similarity_results'
+    output_dir = os.path.join(MODULE_DIR, 'drug_combo_similarity_results')
     os.makedirs(output_dir, exist_ok=True)
 
     np.save(f'{output_dir}/syn_drug_similarity_matrix.npy', syn_drug_sim_matrix)

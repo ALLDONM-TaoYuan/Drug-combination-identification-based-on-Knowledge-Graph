@@ -127,8 +127,8 @@ class BalancedDatasetSampler:
 
 def main():
     # Paths
-    metadata_path = '../dif_classifier/feature_batches/dataset_metadata.json'
-    h5_file_path = '../dif_classifier/feature_batches/dataset.h5'
+    metadata_path = '../feature_batches/dataset_metadata.json'
+    h5_file_path = '../feature_batches/dataset.h5'
     output_dir = './balanced_datasets'
 
     # New sample sizes
