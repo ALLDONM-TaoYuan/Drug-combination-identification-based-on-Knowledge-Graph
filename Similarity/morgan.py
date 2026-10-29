@@ -93,9 +93,8 @@ def main():
     print("RDKit Morgan Fingerprint Extraction")
     print("=" * 60)
 
-    module_dir = os.path.dirname(os.path.abspath(__file__))
-    csv_path = os.path.join(module_dir, 'id_smiles.csv')
-    output_dir = os.path.join(module_dir, 'db_morgan_features')
+    csv_path = './id_smiles.csv'
+    output_dir = 'db_morgan_features'
 
     df = load_smiles_data(csv_path)
     if df is None:

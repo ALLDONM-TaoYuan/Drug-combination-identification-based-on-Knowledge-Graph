@@ -7,8 +7,6 @@ KGP-DC lives. It contains three modules:
 |---|---|
 | `baseline_experiments/` | Leak-free, same-protocol comparison of KGP-DC against four re-implemented literature baselines on pair-level cross-validation. |
 | `negative_sampling/` | Ablation on the negative-sampling strategy: uniform random sampling versus Euclidean / RMS distance screening of the unlabelled pool. |
-| `legacy_published_workflow/` | The originally published workflow, retained unchanged as a read-only reference. |
-| `reference_results/` | The metrics and model artefacts of the originally published workflow. |
 | `../cold_start/` | Strict unseen-drug (single-cold and dual-cold) evaluation with a train-only knowledge graph. |
 
 The original study artefacts are not overwritten by a new run. New runs write
@@ -174,32 +172,30 @@ Reading notes:
 cd performance/baseline_experiments
 pip install -r ../requirements.txt
 
-# 1. assemble the drug-level assets (copies them from ../../cold_start/)
-python data/prepare_assets.py --apply
-
-# 2. validate the split, the folds and the model implementations
+# 1. validate the split, the folds and the model implementations
 python main.py check
 
-# 3. optional: rebuild the large pair-level feature matrices
-#    (multi-GB scratch space; only needed for the legacy warm feature path)
-python data/prepare_assets.py --apply --rebuild-features
+# 2. optional: rebuild the pair metadata and the large pair-level matrices
+#    (the matrices are about 1.5 GB in total and are not version controlled;
+#    see baseline_experiments/data/split_data/README.md)
+python data/negative_rebuild.py --apply
 
-# 4. optional: equal-budget hyper-parameter search (CPU, hours)
+# 3. optional: equal-budget hyper-parameter search (CPU, hours)
 python main.py tune --models all
 
-# 5. train all five methods on the five folds
+# 4. train all five methods on the five folds
 python main.py train
 
-# 6. recompute the metrics table from the stored predictions
+# 5. recompute the metrics table from the stored predictions
 python main.py evaluate
 
-# 7. paired significance tests -> results/significance.{csv,md}
+# 6. paired significance tests -> results/significance.{csv,md}
 python src/stats_test.py --bootstrap 1000
 
-# 8. leakage audit -> results/leakage_audit.json
+# 7. leakage audit -> results/leakage_audit.json
 python src/audit/leakage_audit.py --json results/leakage_audit.json
 
-# 9. figures -> results/figures.png
+# 8. figures -> results/figures.png
 python main.py plot
 ```
 
@@ -331,25 +327,7 @@ under `output/reports_gpu_lite/` is the record of the completed run.
 
 ---
 
-## 3. `legacy_published_workflow/` -- the original published workflow
-
-The code and the pre-trained assets of the originally published pipeline are
-kept unchanged here: the row-level feature construction that expands a drug
-pair into the full Cartesian product of its target combinations (about 8.0 x
-10^6 positive rows on SynDrugMD), the XGBoost training and evaluation script,
-the ChemBERTa and ProtT5 feature extraction scripts, the knowledge-graph
-embedding and the resulting metrics in `../reference_results/`.
-
-It is retained because the reviewers explicitly asked for the scripts that
-reproduce the published dataset expansion, the knowledge-graph construction
-and the published benchmarking. It is **not** the source of any number in the
-revised manuscript, because it splits at the row level *after* the expansion
-and therefore places the same drug pair in several splits. The details are in
-`legacy_published_workflow/README.md`.
-
----
-
-## 4. `../cold_start/` -- strict unseen-drug evaluation
+## 3. `../cold_start/` -- strict unseen-drug evaluation
 
 The pair-level protocol of Section 1 is an interpolation setting. The
 cold-start module provides the inductive setting: drug pools are assigned to
@@ -365,7 +343,7 @@ item of work.
 
 ---
 
-## 5. Known limitations and planned continuation
+## 4. Known limitations and planned continuation
 
 1. **One seed.** The reported baseline table uses seed 42. The planned
    continuation repeats the complete protocol with at least three seeds.
@@ -389,14 +367,13 @@ item of work.
 
 ---
 
-## 6. Reproducibility checklist
+## 5. Reproducibility checklist
 
 | Item | Location |
 |---|---|
 | Fixed seeds | `baseline_experiments/src/common.py` (`SEEDS`, `SPLIT_SEED`), `baseline_experiments/data/split_rules.py` |
 | Split and fold rules | `baseline_experiments/data/split_rules.py` |
 | Negative sampling rules | `baseline_experiments/data/negative_rebuild.py` |
-| Asset assembly | `baseline_experiments/data/prepare_assets.py` |
 | Metric definitions | `baseline_experiments/src/common.py` (`binary_metrics`, `youden_threshold`) |
 | Per-run records | `baseline_experiments/work/runs.csv` |
 | Per-fold predictions | `baseline_experiments/work/predictions/` |
@@ -404,8 +381,7 @@ item of work.
 | Result table | `baseline_experiments/results/table.csv`, `baseline_experiments/results/figures.png` |
 | Significance tests | `baseline_experiments/results/significance.csv`, `baseline_experiments/results/significance.md` |
 | Leakage audit | `baseline_experiments/results/leakage_audit.json` |
-| Original published pipeline | `legacy_published_workflow/` (read-only reference) |
-| Original published metrics | `reference_results/` |
+| Dataset layout and provenance | `baseline_experiments/data/split_data/README.md` |
 | Negative-sampling ablation report | `negative_sampling/output/reports_gpu_lite/` |
 | Cold-start splits and knowledge graphs | `../cold_start/` |
 | Environment | `../requirements.txt` |

@@ -69,9 +69,8 @@ def save_embeddings_transe(model, tf, directory="embeddings"):
 
 def main():
     # 配置路径
-    module_dir = os.path.dirname(os.path.abspath(__file__))
-    triples_file = os.path.join(module_dir, "all_triples.csv")
-    output_dir = os.path.join(module_dir, "embeddings")
+    triples_file = "./Triples/KG/all_triples.csv"
+    output_dir = "embeddings"
 
     # 加载并分割三元组数据
     print("加载并分割三元组数据...")

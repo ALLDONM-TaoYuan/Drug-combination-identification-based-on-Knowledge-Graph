@@ -31,10 +31,13 @@ __pycache__/
 
 # ---------------------------------------------------------------------------
 # baseline_experiments: regenerable artefacts.
-#   data/split_data/*.npy  - drug-level assets are copies of the files that are
-#                             version controlled under cold_start/, and the
-#                             pair-level feature matrices are large and are
-#                             rebuilt with `prepare_assets.py --rebuild-features`.
+#   data/split_data/*.npy  - the pair-level feature matrices (about 0.9 GB for
+#                             the training split) and the drug-level feature
+#                             arrays exceed the 100 MB per-file limit of the
+#                             Git hosting service.  The pair metadata, the fold
+#                             definition and the identifier tables stay under
+#                             version control, so the experiment remains fully
+#                             auditable; see data/split_data/README.md.
 #   work/fold_features/    - per-fold feature cache, rebuilt on demand.
 # The pair metadata, the fold definitions, the predictions and the result
 # tables are version controlled on purpose.

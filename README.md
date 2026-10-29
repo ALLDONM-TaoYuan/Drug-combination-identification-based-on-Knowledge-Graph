@@ -25,20 +25,21 @@ The process consists of five main steps: 1. Collect drug-drug combination inform
 
 ```
 Drug-combination-identification-based-on-Knowledge-Graph/
-|-- database/                   # Source data
+|-- Database/                   # Source data
 |   |-- DDI.csv                 # drug-drug combination triples
 |   |-- DTI.csv                 # drug-target interaction triples
 |   |-- smiles.csv              # drug -> SMILES
 |   `-- targets.csv             # target -> amino-acid sequence
-|-- triples/                    # Knowledge-graph construction and TransE embedding
+|-- Triples/                    # Knowledge-graph construction and TransE embedding
 |   |-- create triples.py
 |   |-- get embeddings.py
 |   `-- embeddings/             # entity / relation embeddings, mapped triples
-|-- performance/                # Canonical model and evaluation workspace
-|   |-- README.md               # protocol, results and discussion of all experiments
-|   |-- requirements.txt
-|   |-- baseline_experiments/   # same-protocol comparison against four literature baselines
-|   `-- negative_sampling/      # negative-sampling strategy ablation (Euclidean / RMS screening)
+|-- Similarity/                 # Drug and combination similarity analysis
+|   |-- morgan.py               # Morgan fingerprint extraction
+|   |-- sim.py                  # Cosine similarity computation and visualization
+|   |-- DB_id_smiles.csv        # DrugCombDB drug SMILES data
+|   |-- Syn_id_smiles.csv       # SynDrugMD drug SMILES data
+|   `-- complete_analysis.png   # Similarity heatmap and distribution plot
 |-- cold_start/                 # Strict unseen-drug evaluation (single-cold and dual-cold)
 |   |-- entity_split_data/      # drug-level features and the warm / single / dual splits
 |   |-- kg_embedding/           # per-split train-only TransE embeddings
@@ -46,12 +47,11 @@ Drug-combination-identification-based-on-Knowledge-Graph/
 |   |-- dual_cold_start/        # split rules for the dual-cold regime
 |   `-- warm_start/             # split rules for the pair-level regime
 |-- diffierent classifical/     # Earlier classifier comparison and positive/negative ratio study
-|-- similarity/                 # Drug and combination similarity analysis
-|   |-- morgan.py               # Morgan fingerprint extraction
-|   |-- sim.py                  # Cosine similarity computation and visualization
-|   |-- DB_id_smiles.csv        # DrugCombDB drug SMILES data
-|   |-- Syn_id_smiles.csv       # SynDrugMD drug SMILES data
-|   `-- complete_analysis.png   # Similarity heatmap and distribution plot
+|-- performance/                # Canonical model and evaluation workspace
+|   |-- README.md               # protocol, results and discussion of all experiments
+|   |-- requirements.txt
+|   |-- baseline_experiments/   # same-protocol comparison against four literature baselines
+|   `-- negative_sampling/      # negative-sampling strategy ablation (Euclidean / RMS screening)
 |-- requirements.txt
 |-- LICENSE
 `-- README.md
@@ -98,7 +98,6 @@ The full protocol is described in `performance/README.md`, Section 1.
 cd performance/baseline_experiments
 pip install -r ../requirements.txt
 
-python data/prepare_assets.py --apply     # assemble the drug-level assets
 python main.py check                       # validate the split, the folds, the models
 python main.py train                       # 5 folds x 5 methods x seed 42
 python main.py evaluate                    # results/table.csv
@@ -126,7 +125,7 @@ the next item of work.
 ### 5. Drug Similarity Analysis
 
 ```bash
-cd similarity/
+cd Similarity/
 # Generate Morgan fingerprints (if not pre-computed)
 python morgan.py
 

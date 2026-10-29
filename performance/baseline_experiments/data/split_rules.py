@@ -85,14 +85,17 @@ def validate() -> dict:
         add(f"{split}: pair metadata exists", pair_path.exists(), pair_path.name)
         if not pair_path.exists():
             continue
-        # The 3840-dimensional pair-level feature matrices are large and are not
-        # distributed with the repository.  They are regenerated on demand with
-        # `python data/prepare_assets.py --rebuild-features`, so their absence
-        # is reported but does not fail the split validation.
+        # The 3840-dimensional pair-level feature matrices are large (about
+        # 0.9 GB for the training split) and exceed the 100 MB per-file limit
+        # of the Git hosting service, so they are not version controlled.  They
+        # are part of the experiment workspace and are produced by
+        # `data/negative_rebuild.py --apply`.  Their absence is therefore
+        # reported but does not fail the split validation, which only depends
+        # on the committed pair metadata.
         add(f"{split}: feature matrix present (optional)",
             feature_path.exists(),
             "present" if feature_path.exists()
-            else "absent - regenerate with prepare_assets.py --rebuild-features",
+            else "absent - not version controlled (see data/split_data/README)",
             optional=True)
         frame = load_split(split)
         frames[split] = frame

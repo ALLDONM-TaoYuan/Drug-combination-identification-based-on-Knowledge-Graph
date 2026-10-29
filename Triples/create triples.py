@@ -54,13 +54,11 @@ def save_knowledge_graph(triples_factory, output_dir):
 
 
 def main():
-    module_dir = os.path.dirname(os.path.abspath(__file__))
-    repo_dir = os.path.dirname(module_dir)
     input_files = [
-        os.path.join(repo_dir, "database", "DDI.csv"),
-        os.path.join(repo_dir, "database", "DTI.csv"),
+        "../Database/DDI.csv",
+        "../Database/DTI.csv",
     ]
-    output_directory = module_dir
+    output_directory = "./"
 
     try:
         print("开始加载和合并三元组文件...")

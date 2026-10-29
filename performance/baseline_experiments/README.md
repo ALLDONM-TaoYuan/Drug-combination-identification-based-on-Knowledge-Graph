@@ -57,10 +57,10 @@ on AUROC (-0.221 pp, p = 4.3e-04, bootstrap 95% CI [-0.38, -0.08] pp). See
 
 ```
 data/
-  prepare_assets.py     assemble the drug-level assets from ../../cold_start/
   split_rules.py        split, negative-sampling and 5-fold rules
   negative_rebuild.py   rebuild the negatives and the warm split
   split_data/           pair metadata, fold definitions, identifier tables
+    README.md           which files are version controlled and which are not
 models/
   KGNN/model.py
   GraRep/model.py
@@ -91,25 +91,23 @@ main.py                 command-line entry point
 ## Data provenance
 
 `data/split_data/` holds the pair metadata, the fold definitions and the
-identifier tables. The drug-level feature arrays are **not** distributed:
-they are copies of the files that live under
-`../../cold_start/entity_split_data/features/` and
-`../../cold_start/kg_embedding/warm/train/`, and they are assembled with
+identifier tables, and they are version controlled. The drug-level and
+pair-level feature arrays are **not**: the training matrix is about 0.9 GB and
+the Git hosting service limits a file to 100 MB. The arrays themselves are
+part of the experiment workspace on the machine on which the experiment was
+executed.
+
+`data/split_data/README.md` lists every file of the directory, states which
+ones are version controlled and explains how the pair list is regenerated:
 
 ```bash
-python data/prepare_assets.py --apply
+cd performance/baseline_experiments
+python data/negative_rebuild.py --apply   # rewrite the pairs, labels and arrays
+python data/split_rules.py --folds        # rebuild folds/fold_*.csv
 ```
 
-The large pair-level feature matrices (3,840 features per drug pair) are
-reproducible from the same drug-level assets with
-
-```bash
-python data/prepare_assets.py --apply --rebuild-features
-```
-
-They are excluded from version control because of their size, not because they
-are irreproducible. The drug-level TransE embedding used for the warm split is
-read from `$KGP_DC_KG_FEATURES` (default `data/split_data/drug_kg_features.npy`).
+The drug-level TransE embedding used for the warm split is read from
+`$KGP_DC_KG_FEATURES` (default `data/split_data/drug_kg_features.npy`).
 The MATLAB executable, if the upstream GraRep core is available, is read from
 `$MATLAB_EXE` (default `matlab` on `PATH`); otherwise the same formulas are
 re-implemented in NumPy and the backend is recorded in the run profile.
@@ -119,8 +117,7 @@ re-implemented in NumPy and the backend is recorded in the run profile.
 ```bash
 pip install -r ../requirements.txt
 
-python data/prepare_assets.py --apply   # assemble the drug-level assets
-python main.py check                     # validate splits and model files
+python main.py check                      # validate splits and model files
 python main.py tune --models all         # optional: equal-budget search (CPU, hours)
 python main.py train                     # 5 folds x seed 42
 python main.py evaluate                  # results/table.csv
