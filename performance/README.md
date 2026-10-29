@@ -7,6 +7,8 @@ KGP-DC lives. It contains three modules:
 |---|---|
 | `baseline_experiments/` | Leak-free, same-protocol comparison of KGP-DC against four re-implemented literature baselines on pair-level cross-validation. |
 | `negative_sampling/` | Ablation on the negative-sampling strategy: uniform random sampling versus Euclidean / RMS distance screening of the unlabelled pool. |
+| `feature.py`, `model.py`, `embeddings/`, `smiles/`, `targets/` | The originally published workflow: the row-level feature expansion, the classifier and the pre-trained features. |
+| `reference_results/` | The metrics and the model artefacts of the originally published workflow. |
 | `../cold_start/` | Strict unseen-drug (single-cold and dual-cold) evaluation with a train-only knowledge graph. |
 
 The original study artefacts are not overwritten by a new run. New runs write
@@ -327,7 +329,38 @@ under `output/reports_gpu_lite/` is the record of the completed run.
 
 ---
 
-## 3. `../cold_start/` -- strict unseen-drug evaluation
+## 3. The originally published workflow
+
+`feature.py`, `model.py`, `embeddings/`, `smiles/` and `targets/` are the code
+and the pre-trained assets of the pipeline that produced the original
+manuscript. They are kept unchanged so that the published workflow can be
+inspected and re-executed, which is what the reviewers explicitly ask for.
+
+| Path | Role |
+|---|---|
+| `feature.py` | Row-level feature construction: a drug pair is expanded into the full Cartesian product of its target combinations, about 13 x 13 = 169 rows per pair on SynDrugMD, and the 3,840-dimensional pair matrix is written as HDF5 batches into `feature_batches/`. |
+| `model.py` | XGBoost training and evaluation on the expanded rows, with the grid-searched parameter set of the published paper. |
+| `embeddings/` | TransE entity and relation embeddings of the full knowledge graph, together with the mapped triple set. |
+| `smiles/` | The ChemBERTa feature extraction and the resulting `(3496, 768)` drug feature matrix. |
+| `targets/` | The ProtT5 feature extraction and the resulting `(1620, 1024)` target feature matrix. |
+| `reference_results/` | The retained metrics and model artefacts of the published run: `model_metrics.csv`, `performance_summary.png`, `training_config.json`, `xgboost_model.json`. A re-run of `model.py` writes into `model_results/`, which is not version controlled. |
+
+```bash
+cd performance
+python feature.py        # writes feature_batches/dataset.h5 (large, not version controlled)
+python model.py          # trains and evaluates, writes into model_results/ (not version controlled)
+```
+
+The published workflow expands a drug pair into its target combinations
+**before** the train / validation / test split and then splits at the row
+level, so the same drug pair can occur in several splits through different
+target combinations. The metrics it produces are the ones of the original
+manuscript and must not be read as a leak-free evaluation; the leak-free
+protocol and the statistical evidence are in Section 1.
+
+---
+
+## 4. `../cold_start/` -- strict unseen-drug evaluation
 
 The pair-level protocol of Section 1 is an interpolation setting. The
 cold-start module provides the inductive setting: drug pools are assigned to
@@ -343,7 +376,7 @@ item of work.
 
 ---
 
-## 4. Known limitations and planned continuation
+## 5. Known limitations and planned continuation
 
 1. **One seed.** The reported baseline table uses seed 42. The planned
    continuation repeats the complete protocol with at least three seeds.
@@ -367,7 +400,7 @@ item of work.
 
 ---
 
-## 5. Reproducibility checklist
+## 6. Reproducibility checklist
 
 | Item | Location |
 |---|---|
@@ -382,6 +415,8 @@ item of work.
 | Significance tests | `baseline_experiments/results/significance.csv`, `baseline_experiments/results/significance.md` |
 | Leakage audit | `baseline_experiments/results/leakage_audit.json` |
 | Dataset layout and provenance | `baseline_experiments/data/split_data/README.md` |
+| Originally published pipeline | `feature.py`, `model.py`, `embeddings/`, `smiles/`, `targets/` |
+| Originally published metrics | `reference_results/` |
 | Negative-sampling ablation report | `negative_sampling/output/reports_gpu_lite/` |
 | Cold-start splits and knowledge graphs | `../cold_start/` |
 | Environment | `../requirements.txt` |

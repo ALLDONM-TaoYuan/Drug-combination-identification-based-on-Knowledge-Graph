@@ -50,6 +50,12 @@ Drug-combination-identification-based-on-Knowledge-Graph/
 |-- performance/                # Canonical model and evaluation workspace
 |   |-- README.md               # protocol, results and discussion of all experiments
 |   |-- requirements.txt
+|   |-- feature.py              # Originally published row-level feature construction
+|   |-- model.py                # Originally published XGBoost training and evaluation
+|   |-- embeddings/             # TransE knowledge-graph embeddings
+|   |-- smiles/                 # SMILES mapping and ChemBERTa features
+|   |-- targets/                # Target mapping and ProtT5 features
+|   |-- reference_results/      # Retained results from the original study
 |   |-- baseline_experiments/   # same-protocol comparison against four literature baselines
 |   `-- negative_sampling/      # negative-sampling strategy ablation (Euclidean / RMS screening)
 |-- requirements.txt

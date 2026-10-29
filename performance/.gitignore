@@ -15,6 +15,14 @@ __pycache__/
 /smiles/missed_drugs.csv
 /targets/missed_targets.csv
 
+# Runtime outputs of the originally published pipeline:
+#   feature_batches/  the HDF5 batches written by performance/feature.py
+#   model_results/    the directory that performance/model.py writes into
+# The retained results of the original study are kept under
+# reference_results/ and are version controlled.
+performance/feature_batches/
+performance/model_results/
+
 # ---------------------------------------------------------------------------
 # negative_sampling: regenerable experiment artefacts.
 # The summary reports under output/reports_gpu_lite/ and the per-run metric
