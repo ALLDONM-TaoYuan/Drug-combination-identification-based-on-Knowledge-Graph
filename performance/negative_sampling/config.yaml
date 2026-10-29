@@ -1,11 +1,11 @@
 project:
   # Paths are resolved relative to this file's directory
   # (performance/negative_sampling).
-  #   base_project      -> the cold-start workspace at the repository root
+  #   base_project      -> the cold-start workspace of this performance workspace
   #   legacy_experiment -> the single-cold workspace that owns the unlabelled
   #                       candidate pool; it is an external, read-only input and
   #                       is not redistributed with this repository
-  base_project: ..\..\cold_start
+  base_project: ..\cold_start
   legacy_experiment: ..\..\negative_sample
   output_dir: output
 

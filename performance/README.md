@@ -9,7 +9,7 @@ KGP-DC lives. It contains three modules:
 | `negative_sampling/` | Ablation on the negative-sampling strategy: uniform random sampling versus Euclidean / RMS distance screening of the unlabelled pool. |
 | `feature.py`, `model.py`, `embeddings/`, `smiles/`, `targets/` | The originally published workflow: the row-level feature expansion, the classifier and the pre-trained features. |
 | `reference_results/` | The metrics and the model artefacts of the originally published workflow. |
-| `../cold_start/` | Strict unseen-drug (single-cold and dual-cold) evaluation with a train-only knowledge graph. |
+| `cold_start/` | Strict unseen-drug (single-cold and dual-cold) evaluation with a train-only knowledge graph. |
 
 The original study artefacts are not overwritten by a new run. New runs write
 to `results/` inside the module they belong to.
@@ -123,7 +123,7 @@ the training code and reports:
 The **drug** overlap is not zero by design: the pair-level split is an
 interpolation setting in which both endpoints of an evaluated pair are seen
 during training. The strict unseen-drug setting is the separate cold-start
-experiment in `../cold_start/`, and the two settings must not be conflated.
+experiment in `cold_start/`, and the two settings must not be conflated.
 
 ### 1.7 Results
 
@@ -360,19 +360,66 @@ protocol and the statistical evidence are in Section 1.
 
 ---
 
-## 4. `../cold_start/` -- strict unseen-drug evaluation
+## 4. `cold_start/` -- strict unseen-drug evaluation
 
-The pair-level protocol of Section 1 is an interpolation setting. The
-cold-start module provides the inductive setting: drug pools are assigned to
-train / validation / test, the test drugs occur in no training combination
-edge, and the knowledge graph is rebuilt per split so that no evaluated pair
-is a graph edge (`held_out_pairs_in_graph: 0` in every `kg_summary.json`).
-Three regimes are prepared -- `warm`, `single` (one held-out endpoint) and
-`dual` (both endpoints held out).
+The pair-level protocol of Section 1 is an interpolation setting: both drugs of
+an evaluated pair were seen during training. This module provides the
+inductive setting.
 
-The splits and the per-split TransE embeddings are committed; the trained
-models and their metrics are not yet part of the repository and are the next
-item of work.
+**Design.** Drug pools are assigned to train / validation / test, and the
+knowledge graph is rebuilt per split, so that no evaluated pair is a graph
+edge (`held_out_pairs_in_graph: 0` in every `kg_summary.json`). The
+drug-target interaction edges of every drug are kept, because the target
+annotation of a drug is available at inference time; what is withheld is the
+combination evidence of the held-out drugs. Three regimes are prepared:
+
+| Regime | Evaluated pairs | Endpoints seen during training |
+|---|---|---|
+| `warm` | pair-level 60/20/20 split | both |
+| `single` | one held-out endpoint | one |
+| `dual` | both endpoints held out | none |
+
+**Results** (seed 42, threshold selected on the validation split only; from
+`cold_start/*/results/performance_metrics.csv`):
+
+| Regime | split | pairs | ACC | SEN | SPE | PRE | F1 | MCC | AUROC | AUPRC |
+|---|---|---|---|---|---|---|---|---|---|---|
+| warm | train | 60,862 | 0.9016 | 0.9020 | 0.9013 | 0.9014 | 0.9017 | 0.8033 | 0.9650 | 0.9575 |
+| warm | test | 19,614 | 0.9047 | 0.9092 | 0.9001 | 0.9010 | 0.9051 | 0.8094 | 0.9656 | 0.9592 |
+| single | train | 36,336 | 0.7422 | 0.9977 | 0.4867 | 0.6603 | 0.7947 | 0.5636 | 0.9583 | 0.9290 |
+| single | test | 20,570 | 0.8236 | 0.9786 | 0.6686 | 0.7470 | 0.8473 | 0.6808 | 0.8562 | 0.7818 |
+| dual | train | 36,336 | 0.7933 | 0.9948 | 0.5918 | 0.7090 | 0.8279 | 0.6409 | 0.9562 | 0.9295 |
+| dual | test | 2,986 | 0.5191 | 0.1186 | 0.9196 | 0.5960 | 0.1978 | 0.0638 | **0.5458** | **0.5299** |
+
+**Reading.** The performance degrades sharply as the drug overlap between
+training and evaluation shrinks: the AUROC falls from 0.966 in the warm
+regime to 0.856 in the single-cold regime and to **0.546 in the dual-cold
+regime**, where the model is at chance level and cannot rank a pair of two
+completely unseen drugs above a pair of two drugs that are never combined.
+The single-cold regime also shows the expected gap between the training AUROC
+of 0.977 and the test AUROC of 0.856, i.e. the model fits the training drugs
+rather than learning a transferable rule.
+
+This is reported as a negative result rather than omitted: the framework
+learns a good model of *recorded* combinations among drugs that are known to
+the source database, and it does not extrapolate to drug pairs for which
+neither endpoint has been seen. It is the direct answer to the question of
+generalisation to novel drugs and it bounds the claims that the manuscript
+may make.
+
+**Layout**
+
+```
+cold_start/
+  xgboost.py                training, tuning and pair-level evaluation
+  build_fold_features.py    feature construction per scenario
+  kg_embedding/             per-split train-only TransE embeddings
+  entity_split_data/        drug-level features and the warm / single / dual splits
+  warm_start/               warm regime, results/ holds the metrics and the figure
+  single_cold_start/        single-cold regime, results/ holds the metrics and the figure
+  dual_cold_start/          dual-cold regime, results/ holds the metrics and the figure
+  data_pipeline/            identifier tables and the ChemBERTa / ProtT5 extraction
+```
 
 ---
 
@@ -390,6 +437,19 @@ item of work.
    unlabelled pool is currently discussed, not estimated.
 5. **Cold-start metrics are missing.** The splits and the knowledge graphs
    exist, the results do not.
+6. **Stale layout in two cold-start split scripts.**
+   `cold_start/single_cold_start/split_rules.py` and
+   `cold_start/dual_cold_start/split_rules.py` still point their split and
+   feature directories at `cold_start/data/...`, while the data actually live
+   in `cold_start/entity_split_data/...`. The splits themselves were produced
+   by `cold_start/warm_start/split_rules.py` and the committed split files are
+   correct, so the reported results are unaffected; the two scripts have to be
+   repointed before they are used to regenerate the single and dual splits.
+7. **Absolute path of the pre-trained checkpoint.**
+   `cold_start/data_pipeline/get_smiles_features.py` defaults to
+   `E:\KGP-DC\Seyonec\ChemBERT`, the location of the ChemBERTa checkpoint on
+   the machine on which the features were extracted. A different machine needs
+   `--model-name`, or the Hugging Face identifier of the checkpoint.
 6. **Protocol asymmetries.** The KGP-DC implementation applies an isotonic
    calibration on a drug-disjoint half of the validation split, and the
    hyper-parameter search of KGP-DC and adapted DeepDDS uses a 20,000-pair
@@ -418,5 +478,5 @@ item of work.
 | Originally published pipeline | `feature.py`, `model.py`, `embeddings/`, `smiles/`, `targets/` |
 | Originally published metrics | `reference_results/` |
 | Negative-sampling ablation report | `negative_sampling/output/reports_gpu_lite/` |
-| Cold-start splits and knowledge graphs | `../cold_start/` |
+| Cold-start splits, knowledge graphs and results | `cold_start/` |
 | Environment | `../requirements.txt` |

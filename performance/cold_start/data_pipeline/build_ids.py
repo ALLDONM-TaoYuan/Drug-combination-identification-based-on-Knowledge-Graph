@@ -8,7 +8,8 @@ import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DB_DIR = ROOT.parent / "Database"
+REPO_ROOT = Path(__file__).resolve().parents[3]
+DB_DIR = REPO_ROOT / "Database"
 FEAT_DIR = ROOT / "data" / "features"
 
 DT_INDEX_DTYPE = np.dtype([("drug_id", np.int64), ("target_index", np.int64)])

@@ -9,7 +9,8 @@ import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DB_DIR = ROOT.parent / "Database"
+REPO_ROOT = Path(__file__).resolve().parents[3]
+DB_DIR = REPO_ROOT / "Database"
 SPLIT_DIR = ROOT / "data" / "split" / "dual"
 DRUG_TABLE = ROOT / "data" / "features" / "drug_table.csv"
 

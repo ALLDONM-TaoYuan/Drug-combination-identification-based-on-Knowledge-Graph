@@ -40,12 +40,6 @@ Drug-combination-identification-based-on-Knowledge-Graph/
 |   |-- DB_id_smiles.csv        # DrugCombDB drug SMILES data
 |   |-- Syn_id_smiles.csv       # SynDrugMD drug SMILES data
 |   `-- complete_analysis.png   # Similarity heatmap and distribution plot
-|-- cold_start/                 # Strict unseen-drug evaluation (single-cold and dual-cold)
-|   |-- entity_split_data/      # drug-level features and the warm / single / dual splits
-|   |-- kg_embedding/           # per-split train-only TransE embeddings
-|   |-- single_cold_start/      # split rules for the single-cold regime
-|   |-- dual_cold_start/        # split rules for the dual-cold regime
-|   `-- warm_start/             # split rules for the pair-level regime
 |-- diffierent classifical/     # Earlier classifier comparison and positive/negative ratio study
 |-- performance/                # Canonical model and evaluation workspace
 |   |-- README.md               # protocol, results and discussion of all experiments
@@ -56,6 +50,12 @@ Drug-combination-identification-based-on-Knowledge-Graph/
 |   |-- smiles/                 # SMILES mapping and ChemBERTa features
 |   |-- targets/                # Target mapping and ProtT5 features
 |   |-- reference_results/      # Retained results from the original study
+|   |-- cold_start/             # Strict unseen-drug evaluation (single-cold and dual-cold)
+|   |   |-- entity_split_data/  # drug-level features and the warm / single / dual splits
+|   |   |-- kg_embedding/       # per-split train-only TransE embeddings
+|   |   |-- warm_start/         # pair-level regime, results/ holds the metrics and the figure
+|   |   |-- single_cold_start/  # single-cold regime, results/ holds the metrics and the figure
+|   |   `-- dual_cold_start/    # dual-cold regime, results/ holds the metrics and the figure
 |   |-- baseline_experiments/   # same-protocol comparison against four literature baselines
 |   `-- negative_sampling/      # negative-sampling strategy ablation (Euclidean / RMS screening)
 |-- requirements.txt

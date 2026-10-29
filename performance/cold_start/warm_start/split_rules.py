@@ -9,6 +9,7 @@ import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[3]
 DATA_ROOT = ROOT / "entity_split_data"
 SPLIT_DIR = DATA_ROOT / "split" / "warm"
 DRUG_TABLE = DATA_ROOT / "features" / "drug_table.csv"
@@ -17,10 +18,10 @@ TRAIN_RATIO, VAL_RATIO, TEST_RATIO = 0.6, 0.2, 0.2
 
 
 def find_database_dir() -> Path:
-    candidates = [ROOT.parent / "database" / "Triples",
-                  ROOT.parent / "database",
-                  ROOT.parent / "Database" / "Triples",
-                  ROOT.parent / "Database"]
+    candidates = [REPO_ROOT / "database" / "Triples",
+                  REPO_ROOT / "database",
+                  REPO_ROOT / "Database" / "Triples",
+                  REPO_ROOT / "Database"]
     for directory in candidates:
         if (directory / "DDI.csv").exists():
             return directory
