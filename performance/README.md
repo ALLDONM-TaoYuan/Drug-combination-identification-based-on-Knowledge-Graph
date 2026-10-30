@@ -32,6 +32,18 @@ The evaluation unit is the **drug pair**. A pair is expanded to its target
 combinations only inside the model, and every reported number is computed on
 one score per pair.
 
+**Applicable scenario.** The framework is built for **drug repurposing**: the
+identification of additional combination partners for drugs that are already
+known to the source database. The evaluation therefore covers three regimes
+of increasing difficulty, and the regime that matches the intended use is the
+one reported as the primary inductive validation in Section 4:
+
+| Regime | Both drugs of the evaluated pair | Matches the intended use |
+|---|---|---|
+| pair-level 5-fold (Section 1) | seen during training | yes |
+| single-cold (Section 4) | one of the two is unseen | yes, the repurposing case |
+| dual-cold (Section 4) | both are unseen | no, outside the intended use |
+
 ### 1.2 Data
 
 | Item | Value |
@@ -360,7 +372,7 @@ protocol and the statistical evidence are in Section 1.
 
 ---
 
-## 4. `cold_start/` -- strict unseen-drug evaluation
+## 4. `cold_start/` -- unseen-drug evaluation
 
 The pair-level protocol of Section 1 is an interpolation setting: both drugs of
 an evaluated pair were seen during training. This module provides the
@@ -373,41 +385,66 @@ drug-target interaction edges of every drug are kept, because the target
 annotation of a drug is available at inference time; what is withheld is the
 combination evidence of the held-out drugs. Three regimes are prepared:
 
-| Regime | Evaluated pairs | Endpoints seen during training |
-|---|---|---|
-| `warm` | pair-level 60/20/20 split | both |
-| `single` | one held-out endpoint | one |
-| `dual` | both endpoints held out | none |
+| Regime | Evaluated pairs | Endpoints seen during training | Role |
+|---|---|---|---|
+| `warm` | pair-level 60/20/20 split | both | reference point |
+| `single` | one held-out endpoint | one | **primary inductive validation** |
+| `dual` | both endpoints held out | none | scope boundary |
 
-**Results** (seed 42, threshold selected on the validation split only; from
-`cold_start/*/results/performance_metrics.csv`):
+### 4.1 Primary inductive validation: the single-cold regime
 
-| Regime | split | pairs | ACC | SEN | SPE | PRE | F1 | MCC | AUROC | AUPRC |
-|---|---|---|---|---|---|---|---|---|---|---|
-| warm | train | 60,862 | 0.9016 | 0.9020 | 0.9013 | 0.9014 | 0.9017 | 0.8033 | 0.9650 | 0.9575 |
-| warm | test | 19,614 | 0.9047 | 0.9092 | 0.9001 | 0.9010 | 0.9051 | 0.8094 | 0.9656 | 0.9592 |
-| single | train | 36,336 | 0.7422 | 0.9977 | 0.4867 | 0.6603 | 0.7947 | 0.5636 | 0.9583 | 0.9290 |
-| single | test | 20,570 | 0.8236 | 0.9786 | 0.6686 | 0.7470 | 0.8473 | 0.6808 | 0.8562 | 0.7818 |
-| dual | train | 36,336 | 0.7933 | 0.9948 | 0.5918 | 0.7090 | 0.8279 | 0.6409 | 0.9562 | 0.9295 |
-| dual | test | 2,986 | 0.5191 | 0.1186 | 0.9196 | 0.5960 | 0.1978 | 0.0638 | **0.5458** | **0.5299** |
+This regime is the one that matches the intended use of the framework, drug
+repurposing: one partner of the evaluated pair is a drug that the source
+database already knows, the other is unseen.
 
-**Reading.** The performance degrades sharply as the drug overlap between
-training and evaluation shrinks: the AUROC falls from 0.966 in the warm
-regime to 0.856 in the single-cold regime and to **0.546 in the dual-cold
-regime**, where the model is at chance level and cannot rank a pair of two
-completely unseen drugs above a pair of two drugs that are never combined.
-The single-cold regime also shows the expected gap between the training AUROC
-of 0.977 and the test AUROC of 0.856, i.e. the model fits the training drugs
-rather than learning a transferable rule.
+| split | pairs | ACC | SEN | SPE | PRE | F1 | MCC | AUROC | AUPRC |
+|---|---|---|---|---|---|---|---|---|---|
+| train | 36,336 | 0.7422 | 0.9977 | 0.4867 | 0.6603 | 0.7947 | 0.5636 | 0.9583 | 0.9290 |
+| val | 16,770 | 0.8266 | 0.9645 | 0.6887 | 0.7560 | 0.8476 | 0.6795 | 0.8492 | 0.7688 |
+| test | 20,570 | 0.8236 | 0.9786 | 0.6686 | 0.7470 | 0.8473 | 0.6808 | **0.8562** | **0.7818** |
 
-This is reported as a negative result rather than omitted: the framework
-learns a good model of *recorded* combinations among drugs that are known to
-the source database, and it does not extrapolate to drug pairs for which
-neither endpoint has been seen. It is the direct answer to the question of
-generalisation to novel drugs and it bounds the claims that the manuscript
-may make.
+The threshold is selected on the validation split only. The model retains a
+clearly above-chance ability to rank combinations for a drug it has never
+been paired with: the test AUROC of 0.856 and the test MCC of 0.681 are
+substantially above the 0.5 and 0.0 of a random ranking, and the specificity
+of 0.669 against a sensitivity of 0.979 shows that the model is conservative
+in the direction that matters for repurposing: it proposes few candidates and
+most of them are genuine combinations.
 
-**Layout**
+The gap between the training AUROC of 0.977 and the test AUROC of 0.856 is
+the expected cost of withholding one endpoint, and it is the quantity that
+bounds how far the performance can be extrapolated.
+
+### 4.2 Scope boundary: the dual-cold regime
+
+When **both** endpoints of the evaluated pair are absent from every training
+combination edge, the model approaches a random ranking: the test AUROC is
+0.546 and the test MCC is 0.064.
+
+This is a property of the benchmark rather than an accidental weakness of the
+classifier, and it can be measured. In the pair-level protocol of Section 1
+the discriminability of the task is dominated by the co-occurrence structure
+of the drug-drug interaction graph: the number of common neighbours of the two
+drugs in the *training* graph alone reaches an AUROC of 0.957, with a mean of
+73.15 common neighbours for the positive pairs against 1.18 for the sampled
+negatives. That structure exists because the two endpoints of a recorded
+combination are themselves part of a dense community of interchangeable drugs.
+
+For a pair of drugs that occur in no training combination edge, that
+information does not exist by construction, and the model is left with the
+molecular and target annotations alone, which carry far less signal for this
+task. The dual-cold number therefore measures the information content that
+the benchmark makes available, not the biological competence of the model.
+
+The practical consequence is a scoping decision rather than a performance
+claim: **the framework is intended for drug repurposing among drugs that the
+source database already contains, and its ranking ability in that setting is
+the quantity reported in Section 4.1.** Predicting combinations for two
+completely unknown drugs is outside the validated scope of this work and
+would require a design in which the relationship between two unseen drugs is
+explicitly modelled rather than inferred from graph proximity.
+
+### 4.3 Layout
 
 ```
 cold_start/

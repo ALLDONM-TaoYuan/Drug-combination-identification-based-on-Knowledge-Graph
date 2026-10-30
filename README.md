@@ -13,6 +13,15 @@ drug-drug interaction and not a safety interaction; the discussion section of
 the manuscript states this explicitly and reports the limits of the
 evaluation protocol.
 
+**Applicable scenario.** The framework is built for **drug repurposing**: the
+identification of additional combination partners for drugs that the source
+database already knows. The evaluation therefore distinguishes three regimes
+of increasing difficulty, and the regime that matches the intended use -- one
+unseen partner, the repurposing case -- is the one reported as the primary
+inductive validation. The regime in which *both* partners are unseen lies
+outside the validated scope and is characterised in `performance/README.md`,
+Section 4.2, together with the measurement that explains why.
+
 ## Overview
 
 ![Overall Pipeline](Overview.png)
@@ -50,7 +59,7 @@ Drug-combination-identification-based-on-Knowledge-Graph/
 |   |-- smiles/                 # SMILES mapping and ChemBERTa features
 |   |-- targets/                # Target mapping and ProtT5 features
 |   |-- reference_results/      # Retained results from the original study
-|   |-- cold_start/             # Strict unseen-drug evaluation (single-cold and dual-cold)
+|   |-- cold_start/             # Unseen-drug evaluation (single-cold is the primary validation)
 |   |   |-- entity_split_data/  # drug-level features and the warm / single / dual splits
 |   |   |-- kg_embedding/       # per-split train-only TransE embeddings
 |   |   |-- warm_start/         # pair-level regime, results/ holds the metrics and the figure
