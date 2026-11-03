@@ -1,0 +1,85 @@
+{
+  "block": "uniform_distribution",
+  "strategy": "uniform",
+  "title": "Uniform random negative sampling",
+  "mode": "single",
+  "sampling_seed": 42,
+  "negative_ratio": 1.0,
+  "positive_pairs": 18168,
+  "negative_pairs": 18168,
+  "feature_dim": 3840,
+  "train_shape": [
+    36336,
+    3840
+  ],
+  "path_base": "repository_root",
+  "frozen_val_test": {
+    "val.npy": {
+      "source": "performance/cold_start/single_cold_start/features/val.npy",
+      "mode": "hardlink",
+      "sha256": "5c198809fac27b982306576907632ae4cbd545af0f3fcefea836b6df3f28dc43"
+    },
+    "val_labels.npy": {
+      "source": "performance/cold_start/single_cold_start/features/val_labels.npy",
+      "mode": "hardlink",
+      "sha256": "72ffb8cee410c7e79cdd13af6c2f8963f37d47ea7647e3ed540f9785a6ec58cd"
+    },
+    "val_sample_weight.npy": {
+      "source": "performance/cold_start/single_cold_start/features/val_sample_weight.npy",
+      "mode": "hardlink",
+      "sha256": "119c4896d3c6f9ffe5f9a95b63bbea33a33b72bacc84dc321dd692c4494d0c28"
+    },
+    "val_pair_meta.csv": {
+      "source": "performance/cold_start/single_cold_start/features/val_pair_meta.csv",
+      "mode": "hardlink",
+      "sha256": "0434d3a52bb0aa2d5c750df630277621d7d38d9d781dd3d45c82aaa3be8b903a"
+    },
+    "test.npy": {
+      "source": "performance/cold_start/single_cold_start/features/test.npy",
+      "mode": "hardlink",
+      "sha256": "33627c1822bf83a5121a42a6798d754231569bffe0257b8b5333ed7eb300a3e9"
+    },
+    "test_labels.npy": {
+      "source": "performance/cold_start/single_cold_start/features/test_labels.npy",
+      "mode": "hardlink",
+      "sha256": "3ac61433e47e1ad33f08d2439da8de8a0d37b67560b79837dad79c4ea54f1225"
+    },
+    "test_sample_weight.npy": {
+      "source": "performance/cold_start/single_cold_start/features/test_sample_weight.npy",
+      "mode": "hardlink",
+      "sha256": "2449faac326d6e96c905c619e70f9a14c0512f947ee4d4f18744e298c1c14e9e"
+    },
+    "test_pair_meta.csv": {
+      "source": "performance/cold_start/single_cold_start/features/test_pair_meta.csv",
+      "mode": "hardlink",
+      "sha256": "6b597a1829d850bf674dc6df930358fa403f675edd1cb5e2dd7111471bedc8af"
+    }
+  },
+  "sampling": {
+    "candidates": 1378788
+  },
+  "train_sha256": {
+    "train.npy": "40ddd55d74c72780398ddb1d1639206f8a314f070317f0c63a189e49e36835c0",
+    "train_labels.npy": "6bf683e0db25065444676c16c6d40007d7c5c06a526dafba878c6d4a2a2df392",
+    "train_pair_meta.csv": "634661e69159b9cc97e0f5ad328f6341598c6f02eb65b8bee64b716c80ed4326"
+  },
+  "elapsed_seconds": 10.4,
+  "checks": {
+    "block": "uniform_distribution",
+    "mode": "single",
+    "positives": 18168,
+    "negatives": 18168,
+    "ratio_1_to_1": true,
+    "self_pairs": 0,
+    "duplicate_negatives": 0,
+    "overlap_with_known_positives": 0,
+    "negative_outside_train_pool": 0,
+    "duplicate_with_val_test_negatives": 0,
+    "feature_shape": [
+      36336,
+      3840
+    ],
+    "finite_features": true,
+    "label_positive_fraction": 0.5
+  }
+}
