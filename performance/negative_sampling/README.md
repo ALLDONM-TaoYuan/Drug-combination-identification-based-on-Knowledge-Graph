@@ -38,9 +38,10 @@ without replacement. It is the unfiltered reference point.
 whose distance to the positive cluster is *larger* than `0.9 x AED`, where
 AED is the mean distance of the candidate pool. The distance of a candidate
 pair is the average, over both drug orientations, of the Euclidean distance
-between the two drugs' standardised blocks (`KG; SMILES; mean target`) and
-the corresponding block means of the positive pairs. It was the intention to
-obtain negatives that are harder than the uniform ones.
+between the two drugs' standardised blocks (`KG || SMILES || mean target`) and
+the corresponding block means of the positive pairs. The rule therefore keeps
+the candidates that lie farther from the positive cluster than the pool
+average, and Section 6 reports where that places the resulting negatives.
 
 **DTI frequency matching** (`frequency_matching.py`) stratifies the candidates
 by the number of drug-target interactions of the two endpoints and draws the
@@ -114,16 +115,20 @@ is reported only for completeness. The paired t-test on three seeds is weak as
 well and the differences reported above should be read as effect sizes with an
 indicative p-value.
 
-## 6. Why the distance rule does not produce harder negatives
+## 6. Discussion of the three negative-sampling strategies
 
-The distance rule was introduced with the expectation that it would yield
-negatives that are harder than uniform ones. The measurements say the
-opposite, and the reason is visible in two distributions.
+The three rules constrain the unlabelled pool in three different ways: none at
+all, a cut on a distance axis, and a match of the target-count distribution.
+The comparison is most informative when the negatives each of them produces is
+described first, and the metrics are read afterwards. Two properties of the
+negative sets are reported for that purpose: the position of the negatives on
+the distance axis that the Euclidean rule uses, and the relation between the
+target-count strata of the negatives and those of the positives.
 
-**On the distance axis itself** the positives and the uniformly drawn
-negatives are nearly identically distributed. Measured on the same feature
-blocks the strategy uses, with the standardisation derived from the positive
-pairs:
+### 6.1 The negative sets produced by the three strategies
+
+Measured on the same feature blocks the strategies use, with the
+standardisation derived from the positive pairs:
 
 | Set | mean | median | p10 | p90 |
 |---|---|---|---|---|
@@ -132,12 +137,16 @@ pairs:
 | negatives, mean Euclidean | 96.71 | 91.52 | 78.88 | 118.69 |
 | negatives, DTI-matched | 80.94 | 75.07 | 53.17 | 114.10 |
 
-The distance axis carries almost no information about the label, so cutting on
-it cannot isolate the hard negatives; it selects a biased subset instead.
+Two properties are worth recording. First, the positives and the uniformly
+drawn negatives are distributed almost identically along this axis, which means
+the axis itself carries little information about the label. Second, the three
+strategies occupy clearly different regions of it: the Euclidean rule keeps the
+negatives that lie farthest from the positive cluster, the DTI-matched rule
+keeps those whose target-count profile matches the positives, and uniform
+sampling lands between the two.
 
-**In the target-count strata** the effect becomes explicit. The positive
-pairs are dominated by drugs with many targets, whereas a uniformly drawn
-negative frequently pairs two drugs that have almost no target at all:
+The target-count strata describe the same three negative sets in a directly
+interpretable way:
 
 | Stratum (target count of the two endpoints) | positives | uniform | mean Euclidean | DTI-matched |
 |---|---|---|---|---|
@@ -163,36 +172,83 @@ negative frequently pairs two drugs that have almost no target at all:
 | 6-10-11+ | 7.34 | 1.50 | 0.35 | 7.34 |
 | 6-10-6-10 | 2.08 | 0.51 | 0.16 | 2.08 |
 
-A pair of drugs with at most one target each is never recorded as a
-combination, so it is an obvious negative. Uniform sampling already places
-40.3 % of its negatives in that stratum, and the distance rule concentrates
-them further, to 49.1 %. The consequence is a distribution shift between the
-training and the test negatives: the model learns a coarse "target richness"
-decision function that fits the training set almost perfectly (training AUROC
-0.9895) while misjudging the recorded combinations that involve less typical
-drugs, which is why the training-test gap widens from +0.100 to +0.150 and the
-test AUROC drops to the lowest value of the three.
+The positive pairs are dominated by drugs with many targets. A uniformly drawn
+negative, in contrast, frequently pairs two drugs that have almost no target at
+all: a pair of drugs with at most one target each is very unlikely to be
+recorded as a combination, and such pairs make up 40.3 % of the uniform
+negatives against 9.9 % of the positives. The Euclidean rule concentrates the
+negatives further in that stratum, to 49.1 %, whereas the DTI-matched rule
+reproduces the positive distribution in every one of the 22 strata by
+construction.
 
-The DTI frequency matching rule is the only one that removes the artefact: it
-reproduces the stratum distribution of the positives in every one of the 22
-strata, which yields the smallest training-test gap (+0.089) and the best
-accuracy and MCC.
+### 6.2 How the metrics respond
+
+The three strategies produce classifiers that are close to each other in
+ranking quality and further apart in the threshold-dependent metrics:
+
+| Strategy | test AUROC | test AUPR | test MCC | test ACC | train - test AUROC gap |
+|---|---|---|---|---|---|
+| Uniform random | 0.8575 | 0.7815 | 0.6519 | 0.8169 | +0.1004 |
+| Mean Euclidean distance | 0.8393 | 0.7654 | 0.6040 | 0.7885 | +0.1503 |
+| DTI frequency matching | 0.8528 | 0.7759 | 0.6790 | 0.8222 | +0.0892 |
+
+The ordering of the three is the same on every metric, and it follows the
+position of the corresponding negative sets on the axes above: the strategy
+whose negatives are farthest from the positive cluster reaches the highest
+training AUROC (0.9895), and also the widest train-test gap (+0.150), while
+the strategy whose negatives reproduce the target-count profile of the
+positives reaches the narrowest gap (+0.089) and the best accuracy and MCC.
+
+The paired tests of Section 5 give the corresponding uncertainty. Uniform
+sampling exceeds the Euclidean rule on all four metrics with three of three
+seeds (AUROC p = 0.0076, AUPR p = 0.0268, MCC p = 0.0086, ACC p = 0.0019),
+while the difference between uniform sampling and DTI frequency matching is
+not resolved by three seeds on the ranking metrics (AUROC p = 0.0868, AUPR
+p = 0.1596) although DTI frequency matching is ahead on accuracy and MCC
+(p = 0.0030 and p = 0.0129).
+
+### 6.3 What the comparison establishes, and what it does not
+
+* The negative-sampling rule is a second-order factor for the ranking
+  metrics: it moves the test AUROC by 1.8 percentage points and the test
+  accuracy by 3.4 points, which is small compared with the differences
+  between the methods compared in the main benchmark.
+* The rule is a first-order factor for the balance of the metrics and for the
+  size of the training-test gap. A negative set that is distributed unlike the
+  positive set, in particular one that over-represents pairs of drugs with
+  almost no target, teaches the model a coarse decision function that does
+  not transfer to the unlabelled pool it is finally evaluated on.
+* Because the positives and the uniform negatives are nearly identically
+  distributed on the distance axis, a threshold cut on that axis cannot be
+  expected to select the confusable negatives; it selects the atypical ones.
+  On this dataset the constraint that does align the negative difficulty with
+  the positive one is the target-count constraint.
+* These observations are associations measured over three strategies and three
+  seeds on one regime. They identify the direction of the effect and the
+  strategy that is preferable under the present protocol; they do not
+  decompose the effect into its individual causes, which would require
+  additional controls.
+* A negative set that is hard in the sense of the reviewer's question, that is
+  composed of pairs that are biologically plausible yet unrecorded, cannot be
+  constructed from this database alone. It requires externally validated
+  negative pairs or a positive-unlabelled formulation, and is stated as such
+  in the manuscript.
 
 ## 7. Conclusion
 
-* The choice of the negative-sampling rule changes the measured performance by
-  at most 1.8 percentage points of AUROC and 3.4 points of accuracy, so the
-  ranking of the methods is not affected by it.
-* Distance-based screening of the unlabelled pool does **not** deliver harder
-  negatives on this dataset. It delivers a more biased sample, and the bias
-  costs accuracy rather than gaining realism.
-* Aligning the negative difficulty with the positive one, as the DTI frequency
-  matching does, is the only rule that improves the balanced metrics.
+* The experiment compares three ways of turning the unlabelled pool into
+  negatives under one fixed protocol and identifies the constraint that aligns
+  the negative difficulty with the positive one, namely the target-count
+  distribution, as the preferable choice under this protocol.
+* The choice of the rule changes the measured performance by at most 1.8
+  percentage points of AUROC and 3.4 points of accuracy, so the ranking of the
+  methods is not affected by it.
+* The rule matters more for the balance of the metrics and for the
+  generalisation gap than for the ranking quality.
 * The absolute level of a pair-level benchmark on this database is governed by
   the intrinsic difficulty of the unlabelled pool rather than by the sampling
-  rule. A genuinely harder negative set requires externally validated negative
-  pairs or a positive-unlabelled formulation; both are outside the scope of
-  the present work and are stated as such in the manuscript.
+  rule, and the present comparison therefore bounds, rather than removes, the
+  effect of the negative-sample assumption.
 
 ## 8. Layout
 
