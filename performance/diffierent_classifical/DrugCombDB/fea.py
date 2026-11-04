@@ -12,26 +12,22 @@ warnings.filterwarnings('ignore')
 
 
 class DrugDatasetGenerator:
-    def __init__(self, embedding_path='./embeddings', smiles_path='./smiles', target_path='./target'):
+    def __init__(self, embedding_path='./embeddings', smiles_path='./smiles', target_path='./proteins'):
         print("Loading data files...")
 
-        # Load embeddings
         entity_mapping = pd.read_csv(f'{embedding_path}/entity_mapping.csv')
-        self.entity_emb = np.load(f'{embedding_path}/entity_embeddings.npy')
+        self.entity_emb = np.load(f'{embedding_path}/entity_emb.npy')
         self.mapped_triples = np.load(f'{embedding_path}/mapped_triples.npy')
 
-        # Load features
         smiles_features = np.load(f'{smiles_path}/smiles_features.npy')
         smiles_ids = np.load(f'{smiles_path}/smiles_ids.npy')
-        protein_features = np.load(f'{target_path}/target_features.npy')
-        protein_ids = np.load(f'{target_path}/target_ids.npy')
+        target_features = np.load(f'{target_path}/protein_features.npy')
+        target_ids = np.load(f'{target_path}/protein_ids.npy')
 
-        # Create mappings
         self.drug_id_to_feature = {int(drug_id): feature for drug_id, feature in zip(smiles_ids, smiles_features)}
         self.protein_id_to_feature = {int(protein_id): feature for protein_id, feature in
-                                      zip(protein_ids, protein_features)}
+                                      zip(target_ids, target_features)}
 
-        # Precompute drug targets
         print("Precomputing drug-target mappings...")
         self.drug_targets_cache = {}
         self.all_drug_ids = list(self.drug_id_to_feature.keys())
@@ -41,12 +37,10 @@ class DrugDatasetGenerator:
             f"Drugs: {len(self.drug_id_to_feature)}, Proteins: {len(self.protein_id_to_feature)}, Triples: {len(self.mapped_triples)}")
 
     def _precompute_drug_targets(self):
-        """Precompute drug-target mappings."""
-        for drug_id in tqdm(self.all_drug_ids, desc="Computing target"):
+        for drug_id in tqdm(self.all_drug_ids, desc="Computing protein"):
             self.drug_targets_cache[drug_id] = self._get_drug_targets(drug_id)
 
     def _get_drug_targets(self, drug_id):
-        """Get target IDs for a drug."""
         targets = []
         for triple in self.mapped_triples:
             h_id, rel_id, t_id = triple
@@ -55,8 +49,6 @@ class DrugDatasetGenerator:
         return targets
 
     def _create_feature_vector(self, head_id, head_target_id, tail_id, tail_target_id):
-        """Create feature vector for a drug pair with specific targets."""
-        # Get entity embeddings
         h_emb = self.entity_emb[int(head_id)]
         t_emb = self.entity_emb[int(tail_id)]
 
@@ -65,33 +57,28 @@ class DrugDatasetGenerator:
         if len(t_emb.shape) == 2:
             t_emb = np.squeeze(t_emb)
 
-        # Get drug features
         h_drug = self.drug_id_to_feature.get(int(head_id))
         t_drug = self.drug_id_to_feature.get(int(tail_id))
 
         if h_drug is None or t_drug is None:
             return None
 
-        # Get target features
         h_target = self.protein_id_to_feature.get(int(head_target_id))
         t_target = self.protein_id_to_feature.get(int(tail_target_id))
 
         if h_target is None or t_target is None:
             return None
 
-        # Concatenate features: [head_emb, head_drug, head_target, tail_emb, tail_drug, tail_target]
         return np.concatenate([h_emb, h_drug, h_target, t_emb, t_drug, t_target], dtype=np.float32)
 
     def _get_drug_drug_pairs(self):
-        """Extract unique drug-drug pairs from triples (relation ID=0)."""
         pairs = set()
         for triple in self.mapped_triples:
-            if int(triple[1]) == 0:  # Drug-drug relation
+            if int(triple[1]) == 0:
                 pairs.add((int(triple[0]), int(triple[2])))
         return list(pairs)
 
     def _save_batch_to_h5(self, h5_file, set_name, data_type, batch_id, features, labels):
-        """Save batch data to HDF5 file."""
         group_path = f'/{set_name}/{data_type}/batch_{batch_id:04d}'
 
         if group_path in h5_file:
@@ -102,16 +89,15 @@ class DrugDatasetGenerator:
         group.create_dataset('labels', data=labels, compression='gzip')
 
         group.attrs.update({
-            'batch_id': int(batch_id),  # Ensure Python int
+            'batch_id': int(batch_id),
             'data_type': data_type,
             'set_name': set_name,
-            'n_samples': int(len(features))  # Ensure Python int
+            'n_samples': int(len(features))
         })
 
         return group_path
 
     def _generate_positive_batches(self, pairs, batch_size, set_name, h5_file):
-        """Generate positive samples in batches."""
         batch_features = []
         batch_labels = []
         batch_id = 0
@@ -124,7 +110,6 @@ class DrugDatasetGenerator:
             if not h_targets or not t_targets:
                 continue
 
-            # Generate all target combinations
             for h_target in h_targets:
                 for t_target in t_targets:
                     feature = self._create_feature_vector(head_id, h_target, tail_id, t_target)
@@ -142,7 +127,6 @@ class DrugDatasetGenerator:
                             batch_labels = []
                             batch_id += 1
 
-        # Save remaining samples
         if batch_features:
             self._save_batch_to_h5(h5_file, set_name, 'positive', batch_id, batch_features, batch_labels)
             total_samples += len(batch_features)
@@ -151,8 +135,8 @@ class DrugDatasetGenerator:
 
         return total_samples, batch_id
 
-    def _generate_negative_batches(self, positive_set, target_samples, batch_size, set_name, h5_file, start_batch_id=0):
-        """Generate negative samples in batches."""
+    def _generate_negative_batches(self, excluded_pairs, target_samples, batch_size, set_name, h5_file,
+                                    start_batch_id=0):
         batch_features = []
         batch_labels = []
         batch_id = start_batch_id
@@ -163,7 +147,7 @@ class DrugDatasetGenerator:
         while generated_samples < target_samples:
             h_id, t_id = random.sample(self.all_drug_ids, 2)
 
-            if (h_id, t_id) in positive_set:
+            if (h_id, t_id) in excluded_pairs:
                 continue
 
             h_targets = self.drug_targets_cache.get(h_id, [])
@@ -192,7 +176,6 @@ class DrugDatasetGenerator:
 
         pbar.close()
 
-        # Save remaining samples
         if batch_features:
             self._save_batch_to_h5(h5_file, set_name, 'negative', batch_id, batch_features, batch_labels)
             print(f"Saved {set_name} negative batch {batch_id}: {len(batch_features)} samples")
@@ -202,12 +185,10 @@ class DrugDatasetGenerator:
 
     def generate_dataset(self, output_dir='./feature_batches', train_ratio=0.7, val_ratio=0.15,
                          positive_batch_size=1000, negative_batch_size=1000):
-        """Generate HDF5 dataset with train/val/test splits."""
         print("Generating HDF5 dataset...")
         os.makedirs(output_dir, exist_ok=True)
         h5_path = os.path.join(output_dir, 'dataset.h5')
 
-        # Get drug pairs and split
         print("Splitting drug pairs...")
         drug_pairs = self._get_drug_drug_pairs()
         train_pairs, temp_pairs = train_test_split(drug_pairs, test_size=1 - train_ratio, random_state=42)
@@ -215,34 +196,28 @@ class DrugDatasetGenerator:
 
         print(f"Train: {len(train_pairs)}, Val: {len(val_pairs)}, Test: {len(test_pairs)} pairs")
 
-        # Generate dataset
+        known_positive_pairs = set(drug_pairs)
+
         with h5py.File(h5_path, 'w') as h5_file:
             h5_file.attrs.update({
                 'dataset_name': 'Drug Combination Dataset',
                 'creation_date': pd.Timestamp.now().isoformat(),
-                'n_drugs': int(len(self.drug_id_to_feature)),  # Ensure Python int
-                'n_proteins': int(len(self.protein_id_to_feature))  # Ensure Python int
+                'n_drugs': int(len(self.drug_id_to_feature)),
+                'n_proteins': int(len(self.protein_id_to_feature))
             })
 
-            # Process each dataset split
             for set_name, pairs in [("train", train_pairs), ("val", val_pairs), ("test", test_pairs)]:
                 print(f"\nProcessing {set_name} set...")
-                positive_set = set(pairs)
-
-                # Generate positive samples
                 pos_samples, _ = self._generate_positive_batches(pairs, positive_batch_size, set_name, h5_file)
+                self._generate_negative_batches(known_positive_pairs, pos_samples, negative_batch_size, set_name,
+                                                h5_file)
 
-                # Generate negative samples
-                self._generate_negative_batches(positive_set, pos_samples, negative_batch_size, set_name, h5_file)
-
-        # Create metadata
         metadata = self._create_metadata(h5_path, output_dir)
 
         print(f"\nDataset generated: {h5_path}")
         return h5_path, metadata
 
     def _create_metadata(self, h5_path, output_dir):
-        """Create metadata JSON file from HDF5 dataset."""
         metadata = {
             'train': {'positive': [], 'negative': []},
             'val': {'positive': [], 'negative': []},
@@ -259,11 +234,10 @@ class DrugDatasetGenerator:
                             group_path = f'{base_path}/{batch_name}'
                             group = h5_file[group_path]
 
-                            # Convert numpy types to Python native types
                             metadata[set_name][data_type].append({
                                 'file': h5_path,
                                 'group_path': group_path,
-                                'samples': int(group.attrs['n_samples'])  # Convert to Python int
+                                'samples': int(group.attrs['n_samples'])
                             })
 
         metadata_file = os.path.join(output_dir, 'dataset_metadata.json')
@@ -275,8 +249,6 @@ class DrugDatasetGenerator:
 
 
 class H5DataLoader:
-    """HDF5 batch data loader."""
-
     def __init__(self, metadata_path, set_name='train', shuffle=True, seed=42):
         with open(metadata_path, 'r', encoding='utf-8') as f:
             metadata = json.load(f)
@@ -296,13 +268,11 @@ class H5DataLoader:
         self.h5_cache = {}
 
     def _get_h5_file(self, file_path):
-        """Get HDF5 file handle with caching."""
         if file_path not in self.h5_cache:
             self.h5_cache[file_path] = h5py.File(file_path, 'r')
         return self.h5_cache[file_path]
 
     def get_next_batch(self, batch_type='balanced'):
-        """Get next batch of data."""
         if batch_type == 'positive':
             if self.pos_idx >= len(self.positive_batches):
                 self.pos_idx = 0
@@ -329,7 +299,7 @@ class H5DataLoader:
             self.neg_idx += 1
             return group['features'][:], group['labels'][:]
 
-        else:  # balanced
+        else:
             if self.pos_idx >= len(self.positive_batches) or self.neg_idx >= len(self.negative_batches):
                 self.pos_idx = 0
                 self.neg_idx = 0
@@ -337,20 +307,17 @@ class H5DataLoader:
                     self.rng.shuffle(self.positive_batches)
                     self.rng.shuffle(self.negative_batches)
 
-            # Get positive batch
             pos_info = self.positive_batches[self.pos_idx]
             h5_file = self._get_h5_file(pos_info['file'])
             pos_group = h5_file[pos_info['group_path']]
             pos_features = pos_group['features'][:]
             pos_labels = pos_group['labels'][:]
 
-            # Get negative batch
             neg_info = self.negative_batches[self.neg_idx]
             neg_group = h5_file[neg_info['group_path']]
             neg_features = neg_group['features'][:]
             neg_labels = neg_group['labels'][:]
 
-            # Combine and shuffle
             features = np.concatenate([pos_features, neg_features], axis=0)
             labels = np.concatenate([pos_labels, neg_labels], axis=0)
 
@@ -362,29 +329,24 @@ class H5DataLoader:
             return features[indices], labels[indices]
 
     def get_total_samples(self):
-        """Get total number of samples."""
         pos_total = sum(item['samples'] for item in self.positive_batches)
         neg_total = sum(item['samples'] for item in self.negative_batches)
         return pos_total, neg_total, pos_total + neg_total
 
     def close(self):
-        """Close all open HDF5 files."""
         for h5_file in self.h5_cache.values():
             h5_file.close()
         self.h5_cache.clear()
 
 
 def main():
-    """Main function to generate HDF5 dataset."""
-    # Set random seeds
     random.seed(42)
     np.random.seed(42)
 
-    # Generate dataset
     generator = DrugDatasetGenerator(
         embedding_path='./embeddings',
         smiles_path='./smiles',
-        target_path='./target'
+        target_path='./proteins'
     )
 
     h5_path, metadata = generator.generate_dataset(
@@ -395,7 +357,6 @@ def main():
         negative_batch_size=1000
     )
 
-    # Print summary
     print("\n" + "=" * 50)
     print("Dataset Generation Complete")
     print("=" * 50)

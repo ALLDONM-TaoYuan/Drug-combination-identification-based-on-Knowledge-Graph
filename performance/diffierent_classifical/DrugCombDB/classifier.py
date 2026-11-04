@@ -19,14 +19,12 @@ from sklearn.metrics import (accuracy_score, recall_score, precision_score,
                              f1_score, matthews_corrcoef, roc_auc_score,
                              average_precision_score, roc_curve, precision_recall_curve)
 
-# 设置字体
 rcParams['font.sans-serif'] = ['DejaVu Sans']
 rcParams['axes.unicode_minus'] = False
 
 RANDOM_STATE = 42
 np.random.seed(RANDOM_STATE)
 
-# 减少数据量，避免内存问题
 CONFIG = {
     "DrugCombDB": {
         "sampling_ratio": 0.2,
@@ -108,7 +106,6 @@ class DataLoader:
                     features_list.append(features)
                     labels_list.append(labels)
 
-                    # 及时清理内存
                     gc.collect()
 
         if features_list:
@@ -140,22 +137,20 @@ class ClassifierBenchmark:
         self.curve_data = {}
 
     def _init_classifiers(self):
-        # 关键修改：在 Windows 上减少并行线程数，避免内存冲突
-        # 使用单线程或少量线程
         classifiers = {
             'Random Forest': RandomForestClassifier(
                 random_state=self.random_state,
-                n_jobs=2,  # 减少到2线程
-                n_estimators=100,  # 减少树的数量
+                n_jobs=2,
+                n_estimators=100,
                 max_depth=15,
                 max_samples=0.5,
                 verbose=0
             ),
             'Logistic Regression': LogisticRegression(
                 random_state=self.random_state,
-                max_iter=500,  # 减少迭代次数
-                n_jobs=1,  # Windows 上使用单线程
-                solver='lbfgs',  # 使用更稳定的求解器
+                max_iter=500,
+                n_jobs=1,
+                solver='lbfgs',
                 verbose=0
             ),
             'Decision Tree': DecisionTreeClassifier(
@@ -177,10 +172,10 @@ class ClassifierBenchmark:
             from xgboost import XGBClassifier
             classifiers['XGBoost'] = XGBClassifier(
                 random_state=self.random_state,
-                n_jobs=2,  # 减少到2线程
+                n_jobs=2,
                 n_estimators=100,
                 max_depth=8,
-                tree_method='hist',  # 使用直方图方法，内存更友好
+                tree_method='hist',
                 verbosity=0,
                 use_label_encoder=False
             )
@@ -206,7 +201,6 @@ class ClassifierBenchmark:
         return metrics
 
     def train_evaluate_single(self, clf_name, clf, X_train, y_train, X_test, y_test):
-        """训练和评估单个分类器，增加内存清理"""
         try:
             clf.fit(X_train, y_train)
 
@@ -219,7 +213,6 @@ class ClassifierBenchmark:
 
             metrics = self.compute_metrics(y_test, y_pred, y_pred_proba)
 
-            # 计算曲线数据
             fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
             precision, recall, _ = precision_recall_curve(y_test, y_pred_proba)
 
@@ -230,66 +223,50 @@ class ClassifierBenchmark:
             raise
 
     def plot_roc_prc_curves(self, dataset_name, output_dir="./benchmark_results"):
-        """绘制ROC和PRC曲线在同一张图中"""
         if dataset_name not in self.curve_data:
             print(f"No curve data found for {dataset_name}")
             return
 
         curve_data = self.curve_data[dataset_name]
 
-        # 创建图形
         plt.figure(figsize=(10, 8))
 
-        # 定义颜色列表
         colors = plt.cm.tab10(np.linspace(0, 1, len(curve_data)))
 
-        # 准备图例
         legend_handles = []
         legend_labels = []
 
-        # 绘制ROC和PRC曲线
         for i, (clf_name, data) in enumerate(curve_data.items()):
             if data is not None:
-                # 获取ROC和PRC数据
                 fpr, tpr, auroc = data['roc']
                 precision, recall, auprc = data['prc']
 
-                # 使用相同的颜色和线型绘制ROC曲线
                 line1, = plt.plot(fpr, tpr, color=colors[i], linewidth=12,
                                   solid_capstyle='round', solid_joinstyle='round')
 
-                # 使用相同的颜色和线型绘制PRC曲线
                 line2, = plt.plot(recall, precision, color=colors[i], linewidth=12,
                                   solid_capstyle='round', solid_joinstyle='round')
 
-                # 添加图例项
                 legend_handles.append(line1)
                 legend_labels.append(f"{clf_name}")
 
-        # 设置坐标轴
         plt.xlabel('False positive rate/Recall', fontsize=16, fontweight='bold')
         plt.ylabel('The positive rate/Precision', fontsize=16, fontweight='bold')
 
-        # 设置坐标轴范围
         plt.xlim([-0.02, 1.02])
         plt.ylim([-0.02, 1.02])
 
-        # 设置坐标轴刻度
         plt.xticks(np.arange(0, 1.1, 0.1), fontsize=12)
         plt.yticks(np.arange(0, 1.1, 0.1), fontsize=12)
 
-        # 添加网格
         plt.grid(True, which='both', alpha=0.2, linestyle='-', linewidth=0.5)
 
-        # 设置图例 - 位于左侧
         plt.legend(legend_handles, legend_labels,
                    loc='upper left', fontsize=12, frameon=True,
                    framealpha=0.9, edgecolor='black')
 
-        # 移除标题
         plt.tight_layout()
 
-        # 保存图像
         os.makedirs(output_dir, exist_ok=True)
         save_path = f"{output_dir}/{dataset_name}_ROC_PRC_curves.png"
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
@@ -297,11 +274,9 @@ class ClassifierBenchmark:
 
         print(f"ROC and PRC curves saved to: {save_path}")
 
-        # 保存曲线数据
         self.save_curve_data(dataset_name, output_dir)
 
     def save_curve_data(self, dataset_name, output_dir):
-        """保存曲线数据到CSV文件"""
         if dataset_name not in self.curve_data:
             return
 
@@ -311,7 +286,6 @@ class ClassifierBenchmark:
 
         for clf_name, data in curve_data.items():
             if data is not None:
-                # ROC曲线点
                 fpr, tpr, auroc = data['roc']
                 for fpr_val, tpr_val in zip(fpr, tpr):
                     curve_points.append({
@@ -323,7 +297,6 @@ class ClassifierBenchmark:
                         'AUC': auroc
                     })
 
-                # PRC曲线点
                 precision, recall, auprc = data['prc']
                 for rec_val, prec_val in zip(recall, precision):
                     curve_points.append({
@@ -357,7 +330,6 @@ class ClassifierBenchmark:
                 )
                 dataset_results[name] = metrics
 
-                # 存储曲线数据
                 dataset_curve_data[name] = {
                     'roc': (fpr, tpr, metrics['AUROC']),
                     'prc': (precision, recall, metrics['AUPRC'])
@@ -366,7 +338,6 @@ class ClassifierBenchmark:
                 print(f"{name:20s} | AUROC: {metrics['AUROC']:.4f} | AUPRC: {metrics['AUPRC']:.4f} | "
                       f"Acc: {metrics['Acc']:.4f} | Sen: {metrics['Sen']:.4f} | Spe: {metrics['Spe']:.4f}")
 
-                # 及时清理内存
                 del clf
                 gc.collect()
 
@@ -378,7 +349,6 @@ class ClassifierBenchmark:
         self.results[dataset_name] = dataset_results
         self.curve_data[dataset_name] = dataset_curve_data
 
-        # 绘制该数据集的ROC和PRC曲线
         self.plot_roc_prc_curves(dataset_name)
 
         return dataset_results
@@ -459,7 +429,6 @@ def main():
     output_dir = "./benchmark_results"
     os.makedirs(output_dir, exist_ok=True)
 
-    # 测试用的小数据集
     datasets = {
         "DrugCombDB": "./feature_batches/dataset_metadata.json",
     }
@@ -475,7 +444,6 @@ def main():
         if benchmark:
             all_results[dataset_name] = benchmark.results[dataset_name]
 
-    # 保存所有结果
     save_combined_results(all_results, output_dir)
 
     print(f"\n{'=' * 60}")
@@ -512,10 +480,9 @@ def save_combined_results(all_results, output_dir):
 
 if __name__ == "__main__":
     os.environ['PYTHONHASHSEED'] = str(RANDOM_STATE)
-    os.environ['OMP_NUM_THREADS'] = '2'  # 限制OpenMP线程数
-    os.environ['OPENBLAS_NUM_THREADS'] = '2'  # 限制OpenBLAS线程数
+    os.environ['OMP_NUM_THREADS'] = '2'
+    os.environ['OPENBLAS_NUM_THREADS'] = '2'
 
-    # 设置Windows兼容性
     if os.name == 'nt':
         import ctypes
 

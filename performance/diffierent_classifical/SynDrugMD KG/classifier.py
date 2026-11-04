@@ -18,30 +18,21 @@ from sklearn.metrics import (accuracy_score, recall_score, precision_score,
                              f1_score, matthews_corrcoef, roc_auc_score,
                              average_precision_score, roc_curve, precision_recall_curve)
 import matplotlib.pyplot as plt
-import seaborn as sns
-from tqdm import tqdm
 
-# 禁用可能的GPU使用（确保所有分类器使用CPU）
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
-# 设置线程数 - 根据您的128核CPU，我们可以设置合适的线程数
-MAX_THREADS = 32  # 不要使用全部128核，避免内存竞争
+MAX_THREADS = 32
 
-# ============================
-# Configuration
-# ============================
 RANDOM_STATE = 42
 np.random.seed(RANDOM_STATE)
 
 
 def print_memory_usage(label=""):
-    """打印内存使用情况"""
     process = psutil.Process(os.getpid())
     mem = process.memory_info().rss / 1024 ** 3
     print(f"{label} Memory usage: {mem:.2f} GB")
 
 
-# 配置参数 - 进一步减少数据量确保稳定性
 CONFIG = {
     "DrugCombDB": {
         "sampling_ratio": 0.2,
@@ -51,16 +42,13 @@ CONFIG = {
     },
     "SynDrugMD": {
         "sampling_ratio": 0.15,
-        "max_train": 100000,  # 进一步减少到10万
+        "max_train": 100000,
         "max_val": 15000,
         "max_test": 15000,
     }
 }
 
 
-# ============================
-# Data Loader
-# ============================
 class DataLoader:
     def __init__(self, metadata_path, random_state=42):
         with open(metadata_path, 'r') as f:
@@ -116,9 +104,6 @@ class DataLoader:
             h5_file.close()
 
 
-# ============================
-# Classifier Benchmark - CPU Optimized
-# ============================
 class ClassifierBenchmark:
     def __init__(self, random_state=42):
         self.random_state = random_state
@@ -126,11 +111,10 @@ class ClassifierBenchmark:
         self.results = {}
 
     def init_classifiers(self):
-        # 所有分类器使用CPU，并限制线程数
         self.classifiers = {
             'Random Forest': RandomForestClassifier(
                 random_state=self.random_state,
-                n_jobs=MAX_THREADS,  # 限制线程数
+                n_jobs=MAX_THREADS,
                 n_estimators=100,
                 max_depth=15,
                 max_samples=0.5,
@@ -139,7 +123,7 @@ class ClassifierBenchmark:
             'Logistic Regression': LogisticRegression(
                 random_state=self.random_state,
                 max_iter=1000,
-                n_jobs=MAX_THREADS,  # 限制线程数
+                n_jobs=MAX_THREADS,
                 verbose=0
             ),
             'Decision Tree': DecisionTreeClassifier(
@@ -150,16 +134,16 @@ class ClassifierBenchmark:
             'MLP': MLPClassifier(
                 random_state=self.random_state,
                 max_iter=200,
-                hidden_layer_sizes=(128, 64),  # 更小的网络
+                hidden_layer_sizes=(128, 64),
                 batch_size=256,
                 early_stopping=True,
                 n_iter_no_change=10,
                 verbose=0,
-                solver='adam',  # 使用adam而不是lbfgs
-                alpha=0.0001,  # L2正则化
+                solver='adam',
+                alpha=0.0001,
                 learning_rate_init=0.001
             ),
-            'XGBoost': None  # 先注释掉XGBoost，使用scikit-learn的分类器
+            'XGBoost': None
         }
 
     def compute_metrics(self, y_true, y_pred, y_pred_proba):
@@ -185,11 +169,10 @@ class ClassifierBenchmark:
         print(f"  Evaluating {classifier_name}...")
         y_pred = classifier.predict(X_test)
 
-        # 处理概率预测
         if hasattr(classifier, 'predict_proba'):
             try:
                 y_pred_proba = classifier.predict_proba(X_test)[:, 1]
-            except:
+            except Exception:
                 y_pred_proba = y_pred.astype(float)
         else:
             y_pred_proba = y_pred.astype(float)
@@ -228,7 +211,6 @@ class ClassifierBenchmark:
                 dataset_results[name] = result
                 print(f"  {name}: AUROC={result['metrics']['AUROC']:.4f}, AUPRC={result['metrics']['AUPRC']:.4f}")
 
-                # 清理内存
                 del clf
                 gc.collect()
 
@@ -323,7 +305,6 @@ class ClassifierBenchmark:
         plt.show()
 
     def save_results(self, output_dir="./benchmark_results"):
-        import os
         os.makedirs(output_dir, exist_ok=True)
 
         for dataset_name, results in self.results.items():
@@ -337,9 +318,6 @@ class ClassifierBenchmark:
                 print(f"Saved metrics: {output_dir}/{dataset_name}_metrics.csv")
 
 
-# ============================
-# Main Execution
-# ============================
 def run_experiment(dataset_name, metadata_path, output_dir="./benchmark_results"):
     config = CONFIG[dataset_name]
 
@@ -372,17 +350,14 @@ def run_experiment(dataset_name, metadata_path, output_dir="./benchmark_results"
     print(f"  Val:   {X_val.shape} (pos: {y_val.sum()}/{len(y_val)})")
     print(f"  Test:  {X_test.shape} (pos: {y_test.sum()}/{len(y_test)})")
 
-    # 释放不需要的数据
     gc.collect()
     print_memory_usage("After loading data:")
 
     benchmark = ClassifierBenchmark(random_state=RANDOM_STATE)
     benchmark.run_benchmark(X_train, y_train, X_val, y_val, X_test, y_test, dataset_name)
 
-    # 保存结果
     benchmark.save_results(output_dir)
 
-    # 可视化
     try:
         benchmark.plot_radar(dataset_name, f"{output_dir}/{dataset_name}_radar.png")
         benchmark.plot_curves(dataset_name, f"{output_dir}/{dataset_name}_curves.png")
@@ -394,7 +369,6 @@ def run_experiment(dataset_name, metadata_path, output_dir="./benchmark_results"
 
 
 def main():
-    import os
     output_dir = "./benchmark_results"
     os.makedirs(output_dir, exist_ok=True)
 
@@ -404,13 +378,11 @@ def main():
 
     all_results = {}
 
-    # 先运行小数据集测试
     print("Testing with DrugCombDB first...")
     if "DrugCombDB" in datasets:
         benchmark = run_experiment("DrugCombDB", datasets["DrugCombDB"], output_dir)
         all_results["DrugCombDB"] = benchmark.results["DrugCombDB"]
 
-    # 清理内存后再运行大数据集
     gc.collect()
     print("\n" + "=" * 60)
     print("Now testing with SynDrugMD...")
