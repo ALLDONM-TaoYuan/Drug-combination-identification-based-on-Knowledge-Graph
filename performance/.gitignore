@@ -10,7 +10,7 @@ __pycache__/
 # Chinese-language companion of the module README.  The repository is kept in
 # English only; this file is a local reading aid and is not version controlled.
 negative_sampling/README.zh-CN.md
-/README.zh-CN.md
+diffierent_classifical/README.zh-CN.md
 
 # ---------------------------------------------------------------------------
 # Superseded top-level performance outputs (kept out of version control)
@@ -33,6 +33,16 @@ performance/model_results/
 # classifier benchmark; they are rebuilt by features.py and are therefore not
 # version controlled either.  The two result files under benchmark_results/ are
 # version controlled.
+performance/feature_batches/
+performance/model_results/
+
+# The classifier benchmark keeps its own intermediates in
+# diffierent_classifical/feature_batches/: the weighted target-combination
+# index together with the train-only knowledge-graph artefacts it contains.
+# They are rebuilt by features.py and are therefore not version controlled.
+# The two result files under diffierent_classifical/benchmark_results/ are
+# version controlled.
+/diffierent_classifical/feature_batches/
 
 # ---------------------------------------------------------------------------
 # negative_sampling: the three strategy blocks.
