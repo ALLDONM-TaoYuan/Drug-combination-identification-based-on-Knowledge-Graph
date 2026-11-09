@@ -7,6 +7,11 @@ __pycache__/
 .vscode/
 .idea/
 
+# Chinese-language companion of the module README.  The repository is kept in
+# English only; this file is a local reading aid and is not version controlled.
+negative_sampling/README.zh-CN.md
+/README.zh-CN.md
+
 # ---------------------------------------------------------------------------
 # Superseded top-level performance outputs (kept out of version control)
 # ---------------------------------------------------------------------------
@@ -23,19 +28,39 @@ __pycache__/
 performance/feature_batches/
 performance/model_results/
 
+# The same feature_batches/ directory also holds the weighted target-combination
+# index (about 58 MB) and the train-only knowledge-graph artefacts of the
+# classifier benchmark; they are rebuilt by features.py and are therefore not
+# version controlled either.  The two result files under benchmark_results/ are
+# version controlled.
+
 # ---------------------------------------------------------------------------
-# negative_sampling: regenerable experiment artefacts.
-# The summary reports under output/reports_gpu_lite/ and the per-run metric
-# JSON files are version controlled; the bulky intermediates are not.
+# negative_sampling: the three strategy blocks.
+#   process/<block>/features/*.npy  the 3,840-dimensional pair feature matrices
+#                                   (about 0.5 GB per split) exceed the 100 MB
+#                                   per-file limit of the Git hosting service.
+#                                   The pair metadata, the sampling manifest with
+#                                   the SHA-256 fingerprints of every input, the
+#                                   labels and the per-seed metrics are version
+#                                   controlled, so the experiment stays auditable.
 # ---------------------------------------------------------------------------
-/negative_sampling/output/datasets/
-/negative_sampling/output/results/
-/negative_sampling/output/splits/
-/negative_sampling/output/audits/*.npz
-/negative_sampling/output/smoke_cache/
-/negative_sampling/output/gpu_lite_smoke_cache/
-/negative_sampling/output/results_gpu_lite/**/xgboost_model.json
-/negative_sampling/output/results_gpu_lite/**/*_pair_predictions.csv
+/negative_sampling/process/*/features/train.npy
+/negative_sampling/process/*/features/val.npy
+/negative_sampling/process/*/features/test.npy
+
+# Upstream frozen features of the cold-start regimes; they are the input of
+# the negative-sampling blocks and are rebuilt by build_fold_features.py.
+# Listed explicitly, because cold_start/entity_split_data/features/ holds the
+# drug-level inputs that must stay under version control.
+/cold_start/single_cold_start/features/train.npy
+/cold_start/single_cold_start/features/val.npy
+/cold_start/single_cold_start/features/test.npy
+/cold_start/dual_cold_start/features/train.npy
+/cold_start/dual_cold_start/features/val.npy
+/cold_start/dual_cold_start/features/test.npy
+/cold_start/warm_start/features/train.npy
+/cold_start/warm_start/features/val.npy
+/cold_start/warm_start/features/test.npy
 
 # ---------------------------------------------------------------------------
 # baseline_experiments: regenerable artefacts.
